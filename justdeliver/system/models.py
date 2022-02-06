@@ -1,3 +1,4 @@
+from typing import Dict, Any
 from uuid import uuid4
 from django.db import models
 from django.db.models import Sum
@@ -48,6 +49,20 @@ class Driver(models.Model):
     def total_income(self):
         total_income = Delivery.objects.filter(driver=self, is_edited=False).aggregate(Sum('income'))
         return total_income
+
+    @staticmethod
+    def get_driver_by_user_profile(user: User):
+        driver = Driver.objects.get(user=user)
+        return driver
+
+    def get_statistics(self):
+        statistics: dict[str, int] = {
+            'distance': self.distance,
+            'tonnage': self.tonnage,
+            'deliveries_count': self.deliveries_count,
+            'income': self.total_income
+        }
+        return statistics
 
     def __str__(self):
         return self.nick

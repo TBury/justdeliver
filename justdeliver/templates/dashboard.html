@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="pl-pl">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="description" content="JustDeliver to najlepszy w Polsce system rozliczeń do ETS2. Prowadź wirtualną spedycję, pokonuj kolejne kilometry i ciesz się jazdą!">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="./css/side_panel.css">
+    <link rel="stylesheet" href="./css/dashboard.css">
+    <title>Panel główny | JustDeliver</title>
+</head>
+<body>
+    <nav class="side-panel">
+        <img class="side-panel__logo" src="./assets/logo.png" alt="Logo z dwoma ikonami skrzydeł nałożonymi na siebie, obok niebieski napis Hercules.">
+        <p class="side_panel__label">Kierowca</p>
+        <div class="side-panel__options">
+            <a class="side-panel__option option--active">
+                <img class="option__icon" src="./icons/home-active.png" alt="Biała ikona domku, obok napis Panel główny.">
+                <p class="option__title">Panel główny</p>
+            </a>
+            <a class="side-panel__option">
+                <img class="option__icon" src="./icons/add-delivery.png" alt="Szara ikona ciężarówki, obok napis Dodaj nową trasę.">
+                <p class="option__title">Dodaj nową trasę</p>
+            </a>
+            <a class="side-panel__option">
+                <img class="option__icon" src="./icons/drivers-card.png" alt="Szara ikona dowodu osobistego, obok napis Karta kierowcy.">
+                <p class="option__title">Karta kierowcy</p>
+            </a>
+            <a class="side-panel__option">
+                <img class="option__icon" src="./icons/dispositions.png" alt="Szara ikona kalendarza, obok napis Dyspozycje.">
+                <p class="option__title">Dyspozycje</p>
+            </a>
+            <a class="side-panel__option">
+                <img class="option__icon" src="./icons/vehicles.png" alt="Szara ikona ciężarówki, obok napis Pojazdy.">
+                <p class="option__title">Pojazdy</p>
+            </a>
+            <a class="side-panel__option">
+                <img class="option__icon" src="./icons/market.png" alt="Szara ikona paczki, obok napis Giełda zleceń.">
+                <p class="option__title">Giełda zleceń</p>
+            </a>
+        </div>
+    </nav>
+    <main class="dashboard">
+        <h1 class="dashboard__welcome-title">
+            Cześć, Karol Krawczyk!
+        </h1>
+        <div class="dashboard__container">
+            <div class="dashboard__statistics-wrapper">
+                <div class="dashboard__card card--statistics-card">
+                    <img class="statistics-card__icon" src="./icons/distance.png" alt="Niebieska ikona dwóch pinezek do map.">
+                    <div class="statistics-card__content">
+                        <p class="statistics-card__content__label">Przejechany dystans</p>
+                        <p class="statistics-card__content__value">139 430 km</p>
+                    </div>
+                </div>
+                <div class="dashboard__card card--statistics-card">
+                    <img class="statistics-card__icon" src="./icons/deliveries.png" alt="Niebieska ikona pinezki umiejscowiona na mapie.">
+                    <div class="statistics-card__content">
+                        <p class="statistics-card__content__label">Ilość wykonanych dostaw</p>
+                        <p class="statistics-card__content__value">542 dostawy</p>
+                    </div>
+                </div>
+                <div class="dashboard__card card--statistics-card">
+                    <img class="statistics-card__icon" src="./icons/income.png" alt="Niebieska ikona banknotów.">
+                    <div class="statistics-card__content">
+                        <p class="statistics-card__content__label">Łączny dochód</p>
+                        <p class="statistics-card__content__value">323 431 zł</p>
+                    </div>
+                </div>
+            </div>
+            <div class="dashboard__card card--current-disposition">
+                <div class="current-disposition__info__wrapper">
+                    <div class="current-disposition__info">
+                        <p class="current-disposition__disposition-number">
+                            Dyspozycja #41303
+                        </p>
+                        <p class="current-disposition__disposition-deadline">
+                            12 lipca 2021, 13:40
+                        </p>
+                    </div>
+                    <div class="current-disposition__status status--not-finished">
+                        Nieukończona
+                    </div>
+                </div>
+                
+                <div class="current-disposition__cities">
+                    <div class="cities__loading-city-wrapper">
+                        <img class="cities__icon" src="./icons/loading-city.png" alt="Niebieska ikona pinezki.">
+                        <div class="loading-info">
+                            <p class="loading-city">La Jonquera, ES</p>
+                            <p class="loading-company">EuroGoodies</p>
+                        </div>
+                    </div>
+                    <div class="cities__unloading-city-wrapper">
+                        <img class="cities__icon" src="./icons/unloading-city.png" alt="Niebieska ikona flagi finisz.">
+                        <div class="unloading-info">
+                            <p class="unloading-city">Berlin, DE</p>
+                            <p class="unloading-company">BHV</p>
+                        </div>
+                    </div>
+                </div>
+    
+                <div class="current-disposition__cargo">
+                    <img class="cargo__icon" src="./icons/cargo.png" alt="Niebieska ikona paczki.">
+                    <p class="cargo">Plastikowe rolki filmowe (10 t)</p>
+                </div>
+            </div>
+            <div class="dashboard__card card--vehicle">
+                <img class="vehicle__photo" src="./assets/vehicle.png" alt="Zdjęcie pojazdu">
+                <p class="vehicle__label">
+                    Twój pojazd
+                </p>
+                <p class="vehicle__title">MAN TGX Euro 6 XXL</p>
+                <span class="vehicle__license-plate">KR 133RT</span>
+                <div class="vehicle__details">
+                    <div class="details--engine">
+                        <p class="vehicle__label">Silnik</p>
+                        <p class="engine">440 KM</p>
+                    </div>
+                    <div class="details--chassis">
+                        <p class="vehicle__label">Nadwozie</p>
+                        <p class="chassis">4x2</p>
+                    </div>
+                    <div class="details--odometer">
+                        <p class="vehicle__label">Przebieg</p>
+                        <p class="odometer">413 334 km</p>
+                    </div>
+                </div>
+            </div>
+            <div class="dashboard__card card--deliveries">
+                <p class="deliveries__label">
+                    Ostatnie zlecenia
+                </p>
+                <div class="delivery">
+                    <div class="delivery__container">
+                        <img src="./icons/waybill.png" alt="Niebieski okrąg z białą ikoną flagi finiszu." class="delivery__icon">
+                        <div class="delivery__details">
+                            <p class="details__cities">
+                                Warszawa - Poznań
+                            </p>
+                            <p class="details__date">
+                                23.07, 13:58
+                            </p>
+                        </div>
+                    </div>
+                    <div class="delivery__status status--rejected">
+                        Odrzucona
+                    </div>
+                </div>
+                <div class="delivery">
+                    <div class="delivery__container">
+                        <img src="./icons/waybill.png" alt="Niebieski okrąg z białą ikoną flagi finiszu." class="delivery__icon">
+                        <div class="delivery__details">
+                            <p class="details__cities">
+                                Warszawa - Poznań
+                            </p>
+                            <p class="details__date">
+                                23.07, 13:58
+                            </p>
+                        </div>
+                    </div>
+                    <div class="delivery__status status--rejected">
+                        Odrzucona
+                    </div>
+                </div>
+                <div class="delivery">
+                    <div class="delivery__container">
+                        <img src="./icons/waybill.png" alt="Niebieski okrąg z białą ikoną flagi finiszu." class="delivery__icon">
+                        <div class="delivery__details">
+                            <p class="details__cities">
+                                Warszawa - Poznań
+                            </p>
+                            <p class="details__date">
+                                23.07, 13:58
+                            </p>
+                        </div>
+                    </div>
+                    <div class="delivery__status status--rejected">
+                        Odrzucona
+                    </div>
+                </div>
+                <div class="delivery">
+                    <div class="delivery__container">
+                        <img src="./icons/waybill.png" alt="Niebieski okrąg z białą ikoną flagi finiszu." class="delivery__icon">
+                        <div class="delivery__details">
+                            <p class="details__cities">
+                                Warszawa - Poznań
+                            </p>
+                            <p class="details__date">
+                                23.07, 13:58
+                            </p>
+                        </div>
+                    </div>
+                    <div class="delivery__status status--rejected">
+                        Odrzucona
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+</body>
+</html>
