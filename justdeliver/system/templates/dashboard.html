@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="pl-pl">
 <head>
@@ -8,37 +9,37 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="./css/side_panel.css">
-    <link rel="stylesheet" href="./css/dashboard.css">
+    <link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
+    <link rel="stylesheet" href="{% static 'css/side_panel.css' %}">
     <title>Panel główny | JustDeliver</title>
 </head>
 <body>
     <nav class="side-panel">
-        <img class="side-panel__logo" src="./assets/logo.png" alt="Logo z dwoma ikonami skrzydeł nałożonymi na siebie, obok niebieski napis Hercules.">
+        <img class="side-panel__logo" src="{% static 'assets/logo.png' %}" alt="Logo z dwoma ikonami skrzydeł nałożonymi na siebie, obok niebieski napis Hercules.">
         <p class="side_panel__label">Kierowca</p>
         <div class="side-panel__options">
             <a class="side-panel__option option--active">
-                <img class="option__icon" src="./icons/home-active.png" alt="Biała ikona domku, obok napis Panel główny.">
+                <img class="option__icon" src="{% static 'icons/home-active.png' %}" alt="Biała ikona domku, obok napis Panel główny.">
                 <p class="option__title">Panel główny</p>
             </a>
             <a class="side-panel__option">
-                <img class="option__icon" src="./icons/add-delivery.png" alt="Szara ikona ciężarówki, obok napis Dodaj nową trasę.">
+                <img class="option__icon" src="{% static 'icons/add-delivery.png' %}" alt="Szara ikona ciężarówki, obok napis Dodaj nową trasę.">
                 <p class="option__title">Dodaj nową trasę</p>
             </a>
             <a class="side-panel__option">
-                <img class="option__icon" src="./icons/drivers-card.png" alt="Szara ikona dowodu osobistego, obok napis Karta kierowcy.">
+                <img class="option__icon" src="{% static 'icons/drivers-card.png' %}" alt="Szara ikona dowodu osobistego, obok napis Karta kierowcy.">
                 <p class="option__title">Karta kierowcy</p>
             </a>
             <a class="side-panel__option">
-                <img class="option__icon" src="./icons/dispositions.png" alt="Szara ikona kalendarza, obok napis Dyspozycje.">
+                <img class="option__icon" src="{% static 'icons/dispositions.png' %}" alt="Szara ikona kalendarza, obok napis Dyspozycje.">
                 <p class="option__title">Dyspozycje</p>
             </a>
             <a class="side-panel__option">
-                <img class="option__icon" src="./icons/vehicles.png" alt="Szara ikona ciężarówki, obok napis Pojazdy.">
+                <img class="option__icon" src="{% static 'icons/vehicles.png' %}" alt="Szara ikona ciężarówki, obok napis Pojazdy.">
                 <p class="option__title">Pojazdy</p>
             </a>
             <a class="side-panel__option">
-                <img class="option__icon" src="./icons/market.png" alt="Szara ikona paczki, obok napis Giełda zleceń.">
+                <img class="option__icon" src="{% static 'icons/market.png' %}" alt="Szara ikona paczki, obok napis Giełda zleceń.">
                 <p class="option__title">Giełda zleceń</p>
             </a>
         </div>
@@ -50,21 +51,21 @@
         <div class="dashboard__container">
             <div class="dashboard__statistics-wrapper">
                 <div class="dashboard__card card--statistics-card">
-                    <img class="statistics-card__icon" src="./icons/distance.png" alt="Niebieska ikona dwóch pinezek do map.">
+                    <img class="statistics-card__icon" src="{% static 'icons/distance.png' %}" alt="Niebieska ikona dwóch pinezek do map.">
                     <div class="statistics-card__content">
                         <p class="statistics-card__content__label">Przejechany dystans</p>
                         <p class="statistics-card__content__value">{{ statistics.distance.distance__sum }} km</p>
                     </div>
                 </div>
                 <div class="dashboard__card card--statistics-card">
-                    <img class="statistics-card__icon" src="./icons/deliveries.png" alt="Niebieska ikona pinezki umiejscowiona na mapie.">
+                    <img class="statistics-card__icon" src="{% static 'icons/deliveries.png' %}" alt="Niebieska ikona pinezki umiejscowiona na mapie.">
                     <div class="statistics-card__content">
                         <p class="statistics-card__content__label">Ilość wykonanych dostaw</p>
                         <p class="statistics-card__content__value">{{ statistics.deliveries_count }} dostawy</p>
                     </div>
                 </div>
                 <div class="dashboard__card card--statistics-card">
-                    <img class="statistics-card__icon" src="./icons/income.png" alt="Niebieska ikona banknotów.">
+                    <img class="statistics-card__icon" src="{% static 'icons/income.png' %}" alt="Niebieska ikona banknotów.">
                     <div class="statistics-card__content">
                         <p class="statistics-card__content__label">Łączny dochód</p>
                         <p class="statistics-card__content__value">{{ statistics.income.income__sum }} zł</p>
@@ -88,14 +89,14 @@
                 
                 <div class="current-disposition__cities">
                     <div class="cities__loading-city-wrapper">
-                        <img class="cities__icon" src="./icons/loading-city.png" alt="Niebieska ikona pinezki.">
+                        <img class="cities__icon" src="{% static 'icons/loading-city.png' %}" alt="Niebieska ikona pinezki.">
                         <div class="loading-info">
                             <p class="loading-city">La Jonquera, ES</p>
                             <p class="loading-company">EuroGoodies</p>
                         </div>
                     </div>
                     <div class="cities__unloading-city-wrapper">
-                        <img class="cities__icon" src="./icons/unloading-city.png" alt="Niebieska ikona flagi finisz.">
+                        <img class="cities__icon" src="{% static 'icons/unloading-city.png' %}" alt="Niebieska ikona flagi finisz.">
                         <div class="unloading-info">
                             <p class="unloading-city">Berlin, DE</p>
                             <p class="unloading-company">BHV</p>
@@ -104,12 +105,12 @@
                 </div>
     
                 <div class="current-disposition__cargo">
-                    <img class="cargo__icon" src="./icons/cargo.png" alt="Niebieska ikona paczki.">
+                    <img class="cargo__icon" src="{% static 'icons/cargo.png' %}" alt="Niebieska ikona paczki.">
                     <p class="cargo">Plastikowe rolki filmowe (10 t)</p>
                 </div>
             </div>
             <div class="dashboard__card card--vehicle">
-                <img class="vehicle__photo" src="./assets/vehicle.png" alt="Zdjęcie pojazdu">
+                <img class="vehicle__photo" src="{% static 'assets/vehicle.png' %}" alt="Zdjęcie pojazdu">
                 <p class="vehicle__label">
                     Twój pojazd
                 </p>
@@ -136,7 +137,7 @@
                 </p>
                 <div class="delivery">
                     <div class="delivery__container">
-                        <img src="./icons/waybill.png" alt="Niebieski okrąg z białą ikoną flagi finiszu." class="delivery__icon">
+                        <img src="{% static 'icons/waybill.png' %}" alt="Niebieski okrąg z białą ikoną flagi finiszu." class="delivery__icon">
                         <div class="delivery__details">
                             <p class="details__cities">
                                 Warszawa - Poznań
@@ -152,7 +153,7 @@
                 </div>
                 <div class="delivery">
                     <div class="delivery__container">
-                        <img src="./icons/waybill.png" alt="Niebieski okrąg z białą ikoną flagi finiszu." class="delivery__icon">
+                        <img src="{% static 'icons/waybill.png' %}" alt="Niebieski okrąg z białą ikoną flagi finiszu." class="delivery__icon">
                         <div class="delivery__details">
                             <p class="details__cities">
                                 Warszawa - Poznań
@@ -168,7 +169,7 @@
                 </div>
                 <div class="delivery">
                     <div class="delivery__container">
-                        <img src="./icons/waybill.png" alt="Niebieski okrąg z białą ikoną flagi finiszu." class="delivery__icon">
+                        <img src="{% static 'icons/waybill.png' %}" alt="Niebieski okrąg z białą ikoną flagi finiszu." class="delivery__icon">
                         <div class="delivery__details">
                             <p class="details__cities">
                                 Warszawa - Poznań
@@ -184,7 +185,7 @@
                 </div>
                 <div class="delivery">
                     <div class="delivery__container">
-                        <img src="./icons/waybill.png" alt="Niebieski okrąg z białą ikoną flagi finiszu." class="delivery__icon">
+                        <img src="{% static 'icons/waybill.png' %}" alt="Niebieski okrąg z białą ikoną flagi finiszu." class="delivery__icon">
                         <div class="delivery__details">
                             <p class="details__cities">
                                 Warszawa - Poznań

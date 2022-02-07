@@ -1,0 +1,300 @@
+* {
+    font-family: 'Open Sans', sans-serif;
+}
+body {
+    margin: 0 auto;
+    display: flex;
+    flex-direction: row;
+}
+
+.dashboard {
+    background-color: #f5f5f5;
+    height: 100vh;
+    width: 1620px;
+}
+
+.dashboard__container {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    margin-left: 48px;
+}
+
+.dashboard__welcome-title {
+    font-size: 24px;
+    margin-left: 96px;
+    margin-top: 24px;
+}
+
+.dashboard__statistics-wrapper {
+    margin-left: 48px;
+    margin-top: 48px;
+    width: 95%;
+    display: flex;
+    flex-direction: row;
+}
+
+.dashboard__card {
+    border-top: 5px solid #0071DC;
+    background-color: white;
+    border-radius: 5px;
+    filter: drop-shadow(0px 3px 3px rgba(0, 0, 0, 0.25));
+}
+
+.card--statistics-card {
+    margin-right: 20px;
+    width: 25%;
+    height: 90px;
+    display: flex;
+    flex-direction: row;
+}
+
+.statistics-card__icon {
+    margin: 20px 20px 32px 16px;
+    width: 32px;
+    align-self: center;
+}
+
+.statistics-card__content {
+    display: flex;
+    flex-direction: column;
+}
+
+.statistics-card__content__label {
+    color: #9C9C9C;
+    font-size: 12px;
+    margin-top: 16px;
+    margin-bottom: 0;
+    user-select: none;
+}
+
+.statistics-card__content__value {
+    margin-top: 4px;
+    font-size: 28px;
+    font-weight: 700;
+    color: black;
+}
+
+.card--current-disposition {
+    margin-left: 48px;
+    margin-top: 32px;
+    width: 500px;
+    height: 200px;
+    padding-bottom: 20px;
+}
+
+.current-disposition__info__wrapper {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.current-disposition__info {
+    display: flex;
+    flex-direction: column;
+    margin-left: 24px;
+}
+
+.current-disposition__disposition-number {
+    font-size: 15px;
+    font-weight: 700;
+    margin-bottom: 0;
+}
+
+.current-disposition__disposition-deadline {
+    font-size: 10px;
+    color: #9C9C9C;
+    margin-top: 2px;
+}
+
+.current-disposition__status,
+.delivery__status {
+    padding-top: 4px;
+    text-align: center;
+    width: 115px;
+    height: 20px;
+    margin-right: 8px;
+    margin-top: 16px;
+    font-weight: 700;
+    font-size: 10px;
+    border-radius: 5px;
+    user-select: none;
+}
+
+.delivery__status {
+    margin-top: 0;
+}
+
+.status--not-finished,
+.status--rejected {
+    background-color: #FFD2D2;
+    color: #C51616;
+}
+
+.current-disposition__cities {
+    margin-top: 32px;
+    margin-left: 24px;
+    display: flex;
+    flex-direction: row;
+}
+
+.cities__loading-city-wrapper,
+.cities__unloading-city-wrapper {
+    display: flex;
+    flex-direction: row;
+}
+
+.cities__icon,
+.cargo__icon {
+    align-self: center;
+}
+
+.loading-info {
+    margin-left: 16px;
+    margin-right: 96px;
+}
+
+.unloading-info {
+    margin-left: 16px;
+}
+
+.loading-city, 
+.unloading-city {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 700;
+}
+
+.loading-company,
+.unloading-company { 
+    margin: 0;
+    margin-top: 2px;
+    font-size: 10px;
+}
+
+.current-disposition__cargo {
+    margin-left: 24px;
+    margin-top: 16px;
+    display: flex;
+    flex-direction: row;
+    font-size: 14px;
+}
+
+.cargo {
+    margin-left: 16px;
+}
+
+.card--vehicle {
+    border-top: none;
+    margin-left: 32px;
+    margin-top: 32px;
+    width: 480px;
+    margin-right: 480px;
+    height: 400px;
+}
+
+.vehicle__label {
+    margin-left: 16px;
+    font-size: 10px;
+    margin-bottom: 0;
+    color: #9C9C9C;
+}
+
+.vehicle__title {
+    margin-top: 4px;
+    margin-left: 16px;
+    font-size: 20px;
+    font-weight: 700;
+    margin-bottom: 16px;
+}
+
+.vehicle__license-plate {
+    background-color: #0071DC;
+    font-weight: 700;
+    margin-left: 16px;
+    color: white;
+    font-size: 12px;
+    padding: 5px 16px 5px 16px;
+    border-radius: 25px;
+    text-align: center;
+}
+
+.vehicle__details {
+    display: flex;
+    flex-direction: row;
+    row-gap: 16px;
+    margin-top: 16px;
+}
+
+.details--engine {
+    display: flex;
+    flex-direction: column;
+}
+
+.details--chassis,
+.details--odometer {
+    margin-left: 32px;
+}
+
+.engine,
+.chassis,
+.odometer {
+    margin-left: 16px;
+    margin-top: 2px;
+    font-weight: 700;
+}
+
+.card--deliveries {
+    margin-top: -150px;
+    margin-left: 48px;
+    width: 500px;
+    padding-bottom: 20px;
+}
+
+.deliveries__label {
+    font-size: 12px;
+    color: #9C9C9C;
+    margin-left: 24px;
+}
+
+.delivery {
+    display: flex;
+    margin-top: 16px;
+    flex-direction: row;
+    justify-content: space-between;
+    padding-bottom: 18px;
+    border-bottom: .5px solid #D8D8D8;
+}
+
+.delivery:last-child {
+    border-bottom: none;
+}
+
+.delivery__icon {
+    align-self: center;
+    margin-left: 16px;
+}
+
+.delivery__container {
+    display: flex;
+    flex-direction: row;
+}
+
+.details__cities {
+    margin: 0 0 0 16px;
+    font-weight: 700;
+}
+
+.details__date {
+    margin: 4px 0 0 16px;
+    color: #9C9C9C;
+    font-size: 10px;
+}
+
+.fade-enter-active {
+    transition: opacity 1s;
+}
+
+.fade-enter {
+    opacity: 0;
+}

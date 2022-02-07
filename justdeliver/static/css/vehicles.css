@@ -1,0 +1,222 @@
+* {
+  font-family: 'Open Sans', sans-serif;
+}
+
+body {
+  margin: 0 auto;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: row;
+          flex-direction: row;
+}
+
+.container {
+  background-color: #f5f5f5;
+  height: 100vh;
+  width: 85%;
+}
+
+.container__welcome-title {
+  font-size: 24px;
+  margin-left: 48px;
+  margin-top: 24px;
+}
+
+.vehicles__add-new-vehicle-button,
+.vehicles__choose-new-vehicle-button {
+  float: right;
+  cursor: pointer;
+  border-radius: 5px;
+  width: 200px;
+  padding: 10px;
+  font-weight: 700;
+  font-size: 16px;
+  text-align: center;
+}
+
+.vehicles__choose-new-vehicle-button {
+  color: white;
+  background-color: #0071DC;
+  border: 0;
+  margin-right: 64px;
+  padding-top: 11px;
+  padding-bottom: 11px;
+}
+
+.vehicles__add-new-vehicle-button {
+  margin-right: 16px;
+  border: 1px solid #0071DC;
+  color: #0071DC;
+}
+
+.vehicles__container {
+  margin: 64px 0 32px 48px;
+}
+
+.vehicle--current-vehicle,
+.vehicle {
+  background-color: white;
+  border-radius: 5px;
+  -webkit-filter: drop-shadow(0px 3px 3px rgba(0, 0, 0, 0.25));
+          filter: drop-shadow(0px 3px 3px rgba(0, 0, 0, 0.25));
+  margin-top: 32px;
+  width: 480px;
+  height: auto;
+}
+
+.current-vehicle__title,
+.all-vehicles__title {
+  color: #9C9C9C;
+  font-weight: 700;
+  font-size: 12px;
+}
+
+.vehicle__label {
+  margin-left: 16px;
+  font-size: 10px;
+  margin-bottom: 0;
+  color: #9C9C9C;
+}
+
+.vehicle__title {
+  margin: 4px 0 16px 16px;
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.vehicle__license-plate {
+  background-color: #0071DC;
+  font-weight: 700;
+  margin-left: 16px;
+  color: white;
+  font-size: 12px;
+  padding: 5px 16px 5px 16px;
+  border-radius: 25px;
+  text-align: center;
+}
+
+.vehicle__details {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: row;
+          flex-direction: row;
+  row-gap: 16px;
+  margin-top: 16px;
+}
+
+.details--engine {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+}
+
+.details--chassis,
+.details--odometer {
+  margin-left: 32px;
+}
+
+.engine,
+.chassis,
+.odometer {
+  margin-left: 16px;
+  margin-top: 2px;
+  font-weight: 700;
+}
+
+.vehicle__actions-container {
+  margin-top: 16px;
+  margin-right: 8px;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: row;
+          flex-direction: row;
+  -webkit-box-pack: end;
+      -ms-flex-pack: end;
+          justify-content: flex-end;
+  gap: 8px;
+}
+
+.all-vehicles__title {
+  margin-top: 32px;
+}
+
+.all-vehicles__container {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: row;
+          flex-direction: row;
+  gap: 16px;
+}
+
+.container__description {
+  color: #9C9C9C;
+  font-size: 14px;
+  margin-left: 48px;
+}
+
+.vehicle__edit-vehicle-button,
+.vehicle__delete-vehicle-button,
+.vehicle__select-vehicle-button {
+  cursor: pointer;
+  margin-bottom: 16px;
+  width: 145px;
+  height: 35px;
+  font-size: 14px;
+  padding: 5px;
+  border: 0;
+  font-weight: 700;
+  border-radius: 5px;
+}
+
+.vehicle__edit-vehicle-button,
+.vehicle__delete-vehicle-button {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: row;
+          flex-direction: row;
+}
+
+.vehicle__edit-vehicle-button,
+.vehicle__select-vehicle-button {
+  background: #0071DC;
+  color: white;
+}
+
+.vehicle__delete-vehicle-button {
+  border: 1px solid #C51616;
+  color: #C51616;
+}
+
+.edit-vehicle-button__icon,
+.delete-vehicle-button__icon {
+  -ms-flex-item-align: center;
+      -ms-grid-row-align: center;
+      align-self: center;
+  margin-left: 8px;
+  margin-right: 8px;
+}
+
+.edit-vehicle-button__text,
+.delete-vehicle-button__text {
+  margin-top: 4px;
+}
+/*# sourceMappingURL=vehicles.css.map */

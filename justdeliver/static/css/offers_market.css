@@ -1,0 +1,171 @@
+* {
+  font-family: "Open Sans", sans-serif;
+}
+
+body {
+  margin: 0 auto;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: row;
+          flex-direction: row;
+}
+
+.container {
+  background-color: #f5f5f5;
+  height: 100%;
+  width: 85%;
+}
+
+.container__welcome-title {
+  font-size: 24px;
+  margin-left: 48px;
+  margin-top: 24px;
+}
+
+.filters-container {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: row;
+          flex-direction: row;
+  -webkit-box-pack: end;
+      -ms-flex-pack: end;
+          justify-content: flex-end;
+  margin-right: 64px;
+  gap: 16px;
+}
+
+.filters-container__select {
+  border: 1px solid #0071dc;
+  font-weight: 700;
+  padding: 5px;
+  color: #0071dc;
+  width: 180px;
+  border-radius: 5px;
+}
+
+.filters-container__search-container {
+  position: relative;
+}
+
+.search__input {
+  width: 320px;
+  height: 32px;
+  border: 1px solid #0071dc;
+  border-radius: 5px;
+  text-indent: 36px;
+}
+
+.search__icon {
+  position: absolute;
+  top: 10px;
+  left: 12px;
+}
+
+.offers-container {
+  margin-top: 32px;
+  margin-left: 48px;
+}
+
+.offers-container__header,
+.offer {
+  display: -ms-grid;
+  display: grid;
+  -ms-grid-columns: 200px 200px 200px 250px 150px 300px;
+      grid-template-columns: 200px 200px 200px 250px 150px 300px;
+  gap: 24px;
+}
+
+.offers-container__header {
+  margin-left: 24px;
+  color: #9c9c9c;
+  font-size: 12px;
+}
+
+.header__line {
+  margin-top: 0;
+  background-color: #e6e6e6;
+  height: 1px;
+  border: 0;
+}
+
+.offer {
+  margin-right: 16px;
+  height: 90px;
+  margin-bottom: 8px;
+  background: #ffffff;
+  -webkit-box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+          box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+  border-radius: 5px;
+}
+
+.offer__place {
+  margin-left: 24px;
+}
+
+.offer__city {
+  font-weight: 700;
+  margin-bottom: 0;
+}
+
+.offer__spedition {
+  margin-top: 4px;
+  color: #9C9C9C;
+  font-size: 12px;
+}
+
+.offer__trailer {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  border: 1px solid #0071dc;
+  height: 20px;
+  width: 100px;
+  padding-top: 5px;
+  margin-top: 16px;
+  margin-left: 24px;
+  font-weight: 700;
+  color: #0071dc;
+  font-size: 12px;
+  border-radius: 20px;
+}
+
+.offer__cargo,
+.offer__price {
+  margin-left: 24px;
+  margin-top: 20px;
+}
+
+.offer__cargo {
+  font-size: 14px;
+}
+
+.offer__price {
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.offer__button {
+  cursor: pointer;
+  color: white;
+  background-color: #0071dc;
+  border: 0;
+  border-radius: 5px;
+  width: 200px;
+  margin-left: 48px;
+  margin-top: 16px;
+  padding: 10px;
+  height: 40px;
+  font-weight: 700;
+  font-size: 14px;
+  text-align: center;
+}
+/*# sourceMappingURL=offers_market.css.map */

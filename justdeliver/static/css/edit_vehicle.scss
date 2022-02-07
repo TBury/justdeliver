@@ -1,0 +1,192 @@
+* {
+    font-family: "Open Sans", sans-serif;
+}
+
+body {
+    margin: 0 auto;
+    display: flex;
+    flex-direction: row;
+}
+
+.container {
+    background-color: #f5f5f5;
+    height: 100vh;
+    width: 85%;
+}
+
+.container__welcome-title {
+    font-size: 24px;
+    margin-left: 48px;
+    margin-top: 24px;
+}
+
+.edit-vehicle-container {
+    border-top: 5px solid #0071dc;
+    background-color: white;
+    border-radius: 5px;
+    filter: drop-shadow(0px 3px 3px rgba(0, 0, 0, 0.25));
+    margin: 32px 64px 64px 48px;
+    padding-bottom: 48px;
+}
+
+.edit-vehicle-container__title,
+.manufacturer__title,
+.models__title,
+.vehicle-details__title {
+    color: #9c9c9c;
+    font-weight: 700;
+    font-size: 14px;
+    margin: 24px 0 16px 48px;
+}
+
+.delivery-container__title {
+    margin-left: 48px;
+    font-weight: 400;
+    font-size: 24px;
+}
+
+.upload-photo-container {
+    margin-top: 48px;
+    margin-left: 48px;
+    display: flex;
+    flex-direction: column;
+    align-content: center;
+    border: 1px dashed #9c9c9c;
+    height: 250px;
+    width: 75%;
+    cursor: pointer;
+}
+
+.upload-photo-container__icon {
+    align-self: center;
+    margin-top: 48px;
+    user-select: none;
+}
+
+.upload-photo-container__title {
+    text-align: center;
+    font-weight: 700;
+    font-size: 24px;
+    margin-bottom: 0;
+    user-select: none;
+}
+
+.upload-photo-container__description {
+    text-align: center;
+    font-size: 16px;
+    color: #9c9c9c;
+    user-select: none;
+}
+
+.edit-vehicle-container__manufacturer-container,
+.models__container,
+.vehicle-details__container {
+    margin-left: 48px;
+    display: flex;
+    flex-direction: row;
+    gap: 16px;
+}
+
+.manufacturer,
+.model {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    height: 32px;
+    font-weight: 700;
+    border: 1px solid #9c9c9c;
+    min-width: 80px;
+    font-size: 14px;
+}
+
+.manufacturer {
+    border-radius: 5px;
+}
+
+.manufacturer__name {
+    margin-left: 16px;
+    margin-right: 16px;
+}
+
+.manufacturer--selected,
+.model--selected {
+    border: 1px solid #0071dc;
+    color: #0071dc;
+}
+
+.model {
+    border-radius: 20px;
+}
+
+.model__name {
+    margin-left: 24px;
+    margin-right: 24px;
+}
+
+.vehicle-details__input-container {
+    display: flex;
+    flex-direction: column;
+    margin-top: 8px;
+}
+
+.vehicle-details__label {
+    font-size: 12px;
+    color: #9c9c9c;
+    margin-bottom: 8px;
+}
+
+.form__input {
+    width: 150px;
+    height: 32px;
+    border: 1px solid #d8d8d8;
+    padding-left: 12px;
+}
+
+.form__input--chassis-input,
+.form__input--engine-input {
+    height: 36px;
+}
+
+.options-container {
+    margin-left: 48px;
+    margin-top: 32px;
+    display: flex;
+    flex-direction: row;
+}
+
+.options__label {
+    margin-left: 10px;
+}
+
+.label__header {
+    font-size: 15px;
+    margin-bottom: 0;
+}
+
+.label__description {
+    margin-top: 2px;
+    font-size: 11px;
+    color: #9c9c9c;
+}
+
+.button-container {
+    margin-top: 32px;
+    margin-right: 48px;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+}
+
+.button-container__save-changes {
+    cursor: pointer;
+    color: white;
+    background-color: #0071dc;
+    border: 0;
+    border-radius: 5px;
+    width: 200px;
+    padding: 10px;
+    font-weight: 700;
+    font-size: 16px;
+    text-align: center;
+}
