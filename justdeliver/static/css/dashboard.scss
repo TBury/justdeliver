@@ -145,6 +145,21 @@ body {
     color: #C51616;
 }
 
+.status--sent {
+    background-color: #B8DCFF;
+    color: #0071DC;
+}
+
+.status--to-edit {
+    background-color: #B8DCFF;
+    color: #0071DC;
+}
+
+.status--accepted {
+    background-color: #BFF9CF;
+    color: #00AC3A;
+}
+
 .current-disposition__cities {
     margin-top: 32px;
     margin-left: 24px;
@@ -335,4 +350,19 @@ body {
 
 .fade-enter {
     opacity: 0;
+}
+
+.no-deliveries {
+    font-size: 16px;
+    text-align: center;
+    font-weight: bold;
+    margin-left: 16px;
+}
+
+.no-deliveries-text {
+    text-align: center;
+    margin-left: 32px;
+    margin-right: 32px;
+    font-size: 14px;
+    color: #9C9C9C;
 }

@@ -70,6 +70,7 @@ class Driver(models.Model):
             'statistics': self.get_statistics(),
             'disposition': Disposition.get_disposition_for_driver(self),
             'vehicle': Vehicle.get_vehicle_for_driver(self),
+            'last_deliveries': Delivery.get_last_deliveries_for_driver(self),
         }
         return info
 
@@ -160,6 +161,24 @@ class Delivery(models.Model):
     status = models.CharField(max_length=16, choices=DELIVERY_STATUS, default="Wysłana")
     is_edited = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
+
+    @staticmethod
+    def get_last_deliveries_for_driver(driver: Driver):
+        deliveries = []
+        accepted = Delivery.objects.filter(driver=driver, status='Zaakceptowana').order_by("-created_at")
+        sent = Delivery.objects.filter(driver=driver, status='Wysłana').order_by("-created_at")
+        to_edit = Delivery.objects.filter(driver=driver, status='Do poprawy').order_by("-created_at")
+        rejected = Delivery.objects.filter(driver=driver, status='Odrzucona').order_by("-created_at")
+        if rejected:
+            deliveries.append(rejected)
+        if to_edit:
+            deliveries.append(to_edit)
+        if sent:
+            deliveries.append(sent)
+        if accepted:
+            deliveries.append(accepted)
+        return deliveries[:5]
+
 
 class DeliveryScreenshot(models.Model):
     delivery = models.ForeignKey(Delivery, default=None, on_delete=models.CASCADE)

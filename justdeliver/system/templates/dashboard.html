@@ -54,21 +54,21 @@
                     <img class="statistics-card__icon" src="{% static 'icons/distance.png' %}" alt="Niebieska ikona dwóch pinezek do map.">
                     <div class="statistics-card__content">
                         <p class="statistics-card__content__label">Przejechany dystans</p>
-                        <p class="statistics-card__content__value">{{ statistics.distance.distance__sum }} km</p>
+                        <p class="statistics-card__content__value">{{ statistics.distance.distance__sum|default_if_none:"0" }} km</p>
                     </div>
                 </div>
                 <div class="dashboard__card card--statistics-card">
                     <img class="statistics-card__icon" src="{% static 'icons/deliveries.png' %}" alt="Niebieska ikona pinezki umiejscowiona na mapie.">
                     <div class="statistics-card__content">
                         <p class="statistics-card__content__label">Ilość wykonanych dostaw</p>
-                        <p class="statistics-card__content__value">{{ statistics.deliveries_count }} dostawy</p>
+                        <p class="statistics-card__content__value">{{ statistics.deliveries_count|default_if_none:"0" }} dostawy</p>
                     </div>
                 </div>
                 <div class="dashboard__card card--statistics-card">
                     <img class="statistics-card__icon" src="{% static 'icons/income.png' %}" alt="Niebieska ikona banknotów.">
                     <div class="statistics-card__content">
                         <p class="statistics-card__content__label">Łączny dochód</p>
-                        <p class="statistics-card__content__value">{{ statistics.income.income__sum }} zł</p>
+                        <p class="statistics-card__content__value">{{ statistics.income.income__sum|default_if_none:"0" }} zł</p>
                     </div>
                 </div>
             </div>
@@ -127,7 +127,6 @@
             </div>
             {% if vehicle %}
             <div class="dashboard__card card--vehicle">
-
                 <img class="vehicle__photo" src="{{ vehicle.photo.url }}" alt="Zdjęcie pojazdu">
                 <p class="vehicle__label">
                     Twój pojazd
@@ -159,70 +158,44 @@
                 <p class="deliveries__label">
                     Ostatnie zlecenia
                 </p>
-                <div class="delivery">
+                {% for qs in last_deliveries %}
+                    {% for delivery in qs %}
+                    <div class="delivery">
                     <div class="delivery__container">
                         <img src="{% static 'icons/waybill.png' %}" alt="Niebieski okrąg z białą ikoną flagi finiszu." class="delivery__icon">
                         <div class="delivery__details">
                             <p class="details__cities">
-                                Warszawa - Poznań
+                                {{ delivery.loading_city }} - {{ delivery.unloading_city }}
                             </p>
                             <p class="details__date">
-                                23.07, 13:58
+                                {{ delivery.created_at }}
                             </p>
                         </div>
                     </div>
-                    <div class="delivery__status status--rejected">
-                        Odrzucona
-                    </div>
-                </div>
-                <div class="delivery">
-                    <div class="delivery__container">
-                        <img src="{% static 'icons/waybill.png' %}" alt="Niebieski okrąg z białą ikoną flagi finiszu." class="delivery__icon">
-                        <div class="delivery__details">
-                            <p class="details__cities">
-                                Warszawa - Poznań
-                            </p>
-                            <p class="details__date">
-                                23.07, 13:58
-                            </p>
+                    {% if delivery.status == 'rejected' %}
+                        <div class="delivery__status status--rejected">
+                            Odrzucona
                         </div>
-                    </div>
-                    <div class="delivery__status status--rejected">
-                        Odrzucona
-                    </div>
-                </div>
-                <div class="delivery">
-                    <div class="delivery__container">
-                        <img src="{% static 'icons/waybill.png' %}" alt="Niebieski okrąg z białą ikoną flagi finiszu." class="delivery__icon">
-                        <div class="delivery__details">
-                            <p class="details__cities">
-                                Warszawa - Poznań
-                            </p>
-                            <p class="details__date">
-                                23.07, 13:58
-                            </p>
+                        {% elif delivery.status == 'sent' %}
+                        <div class="delivery__status status--sent">
+                            Wysłana
                         </div>
-                    </div>
-                    <div class="delivery__status status--rejected">
-                        Odrzucona
-                    </div>
-                </div>
-                <div class="delivery">
-                    <div class="delivery__container">
-                        <img src="{% static 'icons/waybill.png' %}" alt="Niebieski okrąg z białą ikoną flagi finiszu." class="delivery__icon">
-                        <div class="delivery__details">
-                            <p class="details__cities">
-                                Warszawa - Poznań
-                            </p>
-                            <p class="details__date">
-                                23.07, 13:58
-                            </p>
+                        {% elif delivery.status == 'edit' %}
+                        <div class="delivery__status status--to-edit">
+                            Do poprawki
                         </div>
-                    </div>
-                    <div class="delivery__status status--rejected">
-                        Odrzucona
-                    </div>
+                        {% elif delivery.status == 'accepted' %}
+                        <div class="delivery__status status--accepted">
+                            Zaakceptowana
+                        </div>
+                        {% endif %}
                 </div>
+                    {% endfor %}
+                {% empty %}
+                <p class="no-deliveries">Nie masz ostatnich zleceń.</p>
+                <p class="no-deliveries-text">Trzeba wziąć się do pracy. Po zakończeniu zlecenia wpadnij do nas
+                i wrzuć trasę poprzez Dodaj nową trasę.</p>
+                {% endfor %}
             </div>
         </div>
     </main>
