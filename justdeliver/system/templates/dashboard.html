@@ -125,29 +125,36 @@
                 {% endif %}
 
             </div>
-
+            {% if vehicle %}
             <div class="dashboard__card card--vehicle">
-                <img class="vehicle__photo" src="{% static 'assets/vehicle.png' %}" alt="Zdjęcie pojazdu">
+
+                <img class="vehicle__photo" src="{{ vehicle.photo.url }}" alt="Zdjęcie pojazdu">
                 <p class="vehicle__label">
                     Twój pojazd
                 </p>
-                <p class="vehicle__title">MAN TGX Euro 6 XXL</p>
-                <span class="vehicle__license-plate">KR 133RT</span>
+                <p class="vehicle__title">{{ vehicle.manufacturer }} {{ vehicle.model }} {{ vehicle.cabin }}</p>
+                <span class="vehicle__license-plate">{{ vehicle.license_plate }}</span>
                 <div class="vehicle__details">
                     <div class="details--engine">
                         <p class="vehicle__label">Silnik</p>
-                        <p class="engine">440 KM</p>
+                        <p class="engine">{{ vehicle.engine }} KM</p>
                     </div>
                     <div class="details--chassis">
                         <p class="vehicle__label">Nadwozie</p>
-                        <p class="chassis">4x2</p>
+                        <p class="chassis">{{ vehicle.chassis }}</p>
                     </div>
                     <div class="details--odometer">
                         <p class="vehicle__label">Przebieg</p>
-                        <p class="odometer">413 334 km</p>
+                        <p class="odometer">{{ vehicle.odometer }} km</p>
                     </div>
                 </div>
             </div>
+            {% else %}
+            <div class="dashboard__card card--no-vehicle">
+                <p class="no-vehicle">Nie masz kluczyków do żadnego pojazdu.</p>
+                <p class="no-vehicle-text">Poproś swojego spedytora, by przydzielił Ci pojazd. Tylko nie Magnumkę.</p>
+            </div>
+            {% endif %}
             <div class="dashboard__card card--deliveries">
                 <p class="deliveries__label">
                     Ostatnie zlecenia

@@ -69,6 +69,7 @@ class Driver(models.Model):
             'nick': self.nick,
             'statistics': self.get_statistics(),
             'disposition': Disposition.get_disposition_for_driver(self),
+            'vehicle': Vehicle.get_vehicle_for_driver(self),
         }
         return info
 
@@ -126,6 +127,14 @@ class Vehicle(models.Model):
     license_plate = models.CharField(max_length=10)
     is_drawed = models.BooleanField(default=False)
     owner = models.ForeignKey(Company, on_delete=models.CASCADE)
+
+    @staticmethod
+    def get_vehicle_for_driver(driver: Driver):
+        try:
+            vehicle = Vehicle.objects.get(driver=driver)
+            return vehicle
+        except Vehicle.DoesNotExist:
+            return None
 
 
 class Delivery(models.Model):
