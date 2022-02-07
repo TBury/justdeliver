@@ -64,6 +64,13 @@ class Driver(models.Model):
         }
         return statistics
 
+    def get_driver_info(self):
+        info: dict[Any, Any] = {
+            'nick': self.nick,
+            'statistics': self.get_statistics(),
+        }
+        return info
+
     def __str__(self):
         return self.nick
 

@@ -45,7 +45,7 @@
     </nav>
     <main class="dashboard">
         <h1 class="dashboard__welcome-title">
-            Cześć, Karol Krawczyk!
+            Cześć, {{ nick }}!
         </h1>
         <div class="dashboard__container">
             <div class="dashboard__statistics-wrapper">
@@ -53,21 +53,21 @@
                     <img class="statistics-card__icon" src="./icons/distance.png" alt="Niebieska ikona dwóch pinezek do map.">
                     <div class="statistics-card__content">
                         <p class="statistics-card__content__label">Przejechany dystans</p>
-                        <p class="statistics-card__content__value">139 430 km</p>
+                        <p class="statistics-card__content__value">{{ statistics.distance.distance__sum }} km</p>
                     </div>
                 </div>
                 <div class="dashboard__card card--statistics-card">
                     <img class="statistics-card__icon" src="./icons/deliveries.png" alt="Niebieska ikona pinezki umiejscowiona na mapie.">
                     <div class="statistics-card__content">
                         <p class="statistics-card__content__label">Ilość wykonanych dostaw</p>
-                        <p class="statistics-card__content__value">542 dostawy</p>
+                        <p class="statistics-card__content__value">{{ statistics.deliveries_count }} dostawy</p>
                     </div>
                 </div>
                 <div class="dashboard__card card--statistics-card">
                     <img class="statistics-card__icon" src="./icons/income.png" alt="Niebieska ikona banknotów.">
                     <div class="statistics-card__content">
                         <p class="statistics-card__content__label">Łączny dochód</p>
-                        <p class="statistics-card__content__value">323 431 zł</p>
+                        <p class="statistics-card__content__value">{{ statistics.income.income__sum }} zł</p>
                     </div>
                 </div>
             </div>
