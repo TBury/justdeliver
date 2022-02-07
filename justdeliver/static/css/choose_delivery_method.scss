@@ -94,6 +94,7 @@ body {
 .delivery-method__icon {
   margin-top: 48px;
   align-self: center;
+  pointer-events: none;
 }
 
 .delivery-method__title {
@@ -102,13 +103,13 @@ body {
   text-align: center;
   margin-top: 32px;
   margin-bottom: 0;
-  user-select: none;
+  pointer-events: none;
 }
 
 .delivery-method__description {
   font-size: 12px;
   text-align: center;
-  user-select: none;
+  pointer-events: none;
   margin-top: 8px;
 }
 
@@ -131,7 +132,7 @@ body {
 .upload-screenshot-container__icon {
   align-self: center;
   margin-top: 48px;
-  user-select: none;
+  pointer-events: none;
 }
 
 .upload-screenshot-container__title {
@@ -139,12 +140,35 @@ body {
   font-weight: 700;
   font-size: 24px;
   margin-bottom: 0;
-  user-select: none;
+  pointer-events: none;;
 }
 
 .upload-screenshot-container__description {
   text-align: center;
   font-size: 16px;
   color: #9c9c9c;
-  user-select: none;
+  pointer-events: none;;
+}
+
+.delivery-method__automatic-alert {
+  background: #d3e4f5;
+  border-radius: 10px;
+  color: #0076e7;
+  margin-top: 24px;
+  width: 1100px;
+  padding-top: 5px;
+  padding-bottom: 5px;
+}
+
+.automatic-alert__title {
+  font-weight: 700;
+  margin: 16px 0 0 32px;
+  font-size: 18px;
+}
+
+.automatic-alert__description {
+  margin-left: 32px;
+  margin-top: 4px;
+  margin-bottom: 16px;
+  font-size: 14px;
 }
