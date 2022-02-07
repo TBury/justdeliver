@@ -72,43 +72,60 @@
                     </div>
                 </div>
             </div>
+
             <div class="dashboard__card card--current-disposition">
+                {% if disposition %}
                 <div class="current-disposition__info__wrapper">
                     <div class="current-disposition__info">
                         <p class="current-disposition__disposition-number">
-                            Dyspozycja #41303
+                            Dyspozycja #{{ disposition.id }}
                         </p>
                         <p class="current-disposition__disposition-deadline">
-                            12 lipca 2021, 13:40
+                            Przydzielono: {{ disposition.created_at | date:"j E, H:i" }}
                         </p>
                     </div>
                     <div class="current-disposition__status status--not-finished">
                         Nieukończona
                     </div>
                 </div>
-                
+
                 <div class="current-disposition__cities">
                     <div class="cities__loading-city-wrapper">
                         <img class="cities__icon" src="{% static 'icons/loading-city.png' %}" alt="Niebieska ikona pinezki.">
                         <div class="loading-info">
-                            <p class="loading-city">La Jonquera, ES</p>
-                            <p class="loading-company">EuroGoodies</p>
+                            <p class="loading-city">{{ disposition.loading_city }}</p>
+                            <p class="loading-company">{{ disposition.loading_spedition }}</p>
                         </div>
                     </div>
                     <div class="cities__unloading-city-wrapper">
                         <img class="cities__icon" src="{% static 'icons/unloading-city.png' %}" alt="Niebieska ikona flagi finisz.">
                         <div class="unloading-info">
-                            <p class="unloading-city">Berlin, DE</p>
-                            <p class="unloading-company">BHV</p>
+                            <p class="unloading-city">{{ disposition.unloading_city }}</p>
+                            <p class="unloading-company">{{ disposition.unloading_spedition }}</p>
                         </div>
                     </div>
                 </div>
-    
+
                 <div class="current-disposition__cargo">
                     <img class="cargo__icon" src="{% static 'icons/cargo.png' %}" alt="Niebieska ikona paczki.">
-                    <p class="cargo">Plastikowe rolki filmowe (10 t)</p>
+                    <p class="cargo">{{ disposition.cargo }} ({{ disposition.tonnage }} t)</p>
                 </div>
+                {% else %}
+                <div class="current-disposition__info__wrapper">
+                    <div class="current-disposition__info">
+                        <p class="current-disposition__no-disposition-header">
+                            Wszystko gotowe!
+                        </p>
+                        <p class="current-disposition__no-disposition-text">
+                            Nie masz żadnej przydzielonej dyspozycji. Wszystkie dyspozycje zostały wykonane.
+                            W tym miejscu pojawi się jakaś, gdy przydzieli ją spedycja.
+                        </p>
+                    </div>
+                </div>
+                {% endif %}
+
             </div>
+
             <div class="dashboard__card card--vehicle">
                 <img class="vehicle__photo" src="{% static 'assets/vehicle.png' %}" alt="Zdjęcie pojazdu">
                 <p class="vehicle__label">

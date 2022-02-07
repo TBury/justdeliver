@@ -68,6 +68,7 @@ class Driver(models.Model):
         info: dict[Any, Any] = {
             'nick': self.nick,
             'statistics': self.get_statistics(),
+            'disposition': Disposition.get_disposition_for_driver(self),
         }
         return info
 
@@ -191,6 +192,14 @@ class Disposition(models.Model):
     tonnage = models.PositiveSmallIntegerField(default=0)
     created_at = models.DateTimeField(auto_now_add=True)
     deadline = models.DateTimeField()
+
+    @staticmethod
+    def get_disposition_for_driver(driver: Driver):
+        try:
+            disposition = Disposition.objects.get(driver=driver)
+            return disposition
+        except Disposition.DoesNotExist:
+            return None
 
 
 class VehicleBorrow(models.Model):

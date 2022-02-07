@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from .models import Driver
+from .models import Driver, Disposition
 
 
 def dashboard(request):
