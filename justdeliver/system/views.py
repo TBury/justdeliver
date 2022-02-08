@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect
-from .models import Driver, Disposition, DeliveryScreenshot
 from django.http import HttpResponse
+from .models import Driver, Disposition, DeliveryScreenshot, Delivery
+from .forms import NewDeliveryForm
 
 
 def dashboard(request):
@@ -15,7 +16,6 @@ def select_delivery_adding_mode(request):
 
 def upload_screenshots(request):
     if request.method == "POST":
-        print(request.FILES)
         delivery_key = DeliveryScreenshot.process_screenshots(
             user=request.user,
             screenshots=request.FILES,
@@ -30,4 +30,22 @@ def upload_screenshots(request):
 
 
 def add_delivery_details(request):
-    return render(request, "add_delivery_details.html")
+    if request.session.get("delivery_key"):
+        delivery_key = request.session.get("delivery_key")
+        try:
+            delivery = Delivery.objects.get(delivery_key=delivery_key)
+            if request.method == "POST":
+                form = NewDeliveryForm(request.POST, instance=delivery)
+                if form.is_valid():
+                    form.save()
+                    del request.session["delivery_key"]
+                return redirect("/dashboard")
+            else:
+                context = {
+                    'form': NewDeliveryForm(instance=delivery)
+                }
+                return render(request, "add_delivery_details.html", context)
+        except Delivery.DoesNotExist:
+            return HttpResponse(status=403, content="Brak klucza dostawy.")
+    else:
+        return HttpResponse(status=403, content="Brak klucza dostawy.")
