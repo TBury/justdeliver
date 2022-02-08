@@ -177,7 +177,7 @@ class Delivery(models.Model):
             deliveries.append(sent)
         if accepted:
             deliveries.append(accepted)
-        return deliveries[:5]
+        return deliveries
 
 
 class DeliveryScreenshot(models.Model):

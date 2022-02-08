@@ -159,7 +159,7 @@
                     Ostatnie zlecenia
                 </p>
                 {% for qs in last_deliveries %}
-                    {% for delivery in qs %}
+                    {% for delivery in qs|slice:"0:5" %}
                     <div class="delivery">
                     <div class="delivery__container">
                         <img src="{% static 'icons/waybill.png' %}" alt="Niebieski okrąg z białą ikoną flagi finiszu." class="delivery__icon">
