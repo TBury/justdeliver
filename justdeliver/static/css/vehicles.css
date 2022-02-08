@@ -15,7 +15,7 @@ body {
 
 .container {
   background-color: #f5f5f5;
-  height: 100vh;
+  height: 100%;
   width: 85%;
 }
 
@@ -47,9 +47,10 @@ body {
 }
 
 .vehicles__add-new-vehicle-button {
-  margin-right: 16px;
+  margin-right: 128px;
   border: 1px solid #0071DC;
   color: #0071DC;
+  background: white;
 }
 
 .vehicles__container {
@@ -175,7 +176,7 @@ body {
 .vehicle__select-vehicle-button {
   cursor: pointer;
   margin-bottom: 16px;
-  width: 145px;
+  width: 165px;
   height: 35px;
   font-size: 14px;
   padding: 5px;
@@ -193,9 +194,15 @@ body {
   -webkit-box-direction: normal;
       -ms-flex-direction: row;
           flex-direction: row;
+  gap: 12px;
 }
 
-.vehicle__edit-vehicle-button,
+.vehicle__edit-vehicle-button {
+  background: white;
+  border: 1px solid #0071DC;
+  color: #0071DC;
+}
+
 .vehicle__select-vehicle-button {
   background: #0071DC;
   color: white;
@@ -204,6 +211,7 @@ body {
 .vehicle__delete-vehicle-button {
   border: 1px solid #C51616;
   color: #C51616;
+  background: white;
 }
 
 .edit-vehicle-button__icon,
@@ -217,6 +225,6 @@ body {
 
 .edit-vehicle-button__text,
 .delete-vehicle-button__text {
-  margin-top: 4px;
+  margin-top: 2px;
 }
 /*# sourceMappingURL=vehicles.css.map */

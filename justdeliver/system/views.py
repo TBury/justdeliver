@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
-from .models import Driver, Disposition, DeliveryScreenshot, Delivery
+from .models import Driver, Disposition, DeliveryScreenshot, Delivery, Vehicle
 from .forms import NewDeliveryForm
 
 
@@ -67,6 +67,7 @@ def drivers_card(request):
     }
     return render(request, "drivers_card.html", context)
 
+
 def show_dispositions(request):
     driver = Driver.get_driver_by_user_profile(request.user)
     current_disposition = Disposition.get_disposition_for_driver(driver)
@@ -76,3 +77,14 @@ def show_dispositions(request):
         'dispositions': dispositions,
     }
     return render(request, "dispositions.html", context)
+
+
+def show_vehicles(request):
+    driver = Driver.get_driver_by_user_profile(request.user)
+    current_vehicle = Vehicle.get_vehicle_for_driver(driver)
+    vehicles = Vehicle.get_driver_vehicles(driver)
+    context = {
+        'current_vehicle': current_vehicle,
+        'vehicles': vehicles,
+    }
+    return render(request, "vehicles.html", context)

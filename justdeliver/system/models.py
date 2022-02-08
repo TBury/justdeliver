@@ -119,7 +119,7 @@ class Vehicle(models.Model):
     )
 
     manufacturer = models.CharField(max_length=24, choices=MANUFACTURERS)
-    driver = models.OneToOneField(Driver, null=True, on_delete=models.SET_NULL)
+    driver = models.OneToOneField(Driver, null=True, blank=True, on_delete=models.SET_NULL)
     model = models.CharField(max_length=64)
     photo = models.ImageField(upload_to='vehicles')
     cabin = models.CharField(max_length=10)
@@ -128,12 +128,21 @@ class Vehicle(models.Model):
     odometer = models.PositiveIntegerField(default=0)
     license_plate = models.CharField(max_length=10)
     is_drawed = models.BooleanField(default=False)
-    owner = models.ForeignKey(Company, on_delete=models.CASCADE)
+    company_owner = models.ForeignKey(Company, on_delete=models.CASCADE, null=True, blank=True)
+    driver_owner = models.ForeignKey(Driver, on_delete=models.CASCADE, null=True, blank=True, related_name="driver_owner")
 
     @staticmethod
     def get_vehicle_for_driver(driver: Driver):
         try:
-            vehicle = Vehicle.objects.get(driver=driver)
+            vehicle = Vehicle.objects.get(driver=driver, driver_owner=driver)
+            return vehicle
+        except Vehicle.DoesNotExist:
+            return None
+
+    @staticmethod
+    def get_driver_vehicles(driver: Driver):
+        try:
+            vehicle = Vehicle.objects.filter(driver=None, driver_owner=driver)
             return vehicle
         except Vehicle.DoesNotExist:
             return None
