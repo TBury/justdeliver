@@ -41,8 +41,15 @@ def add_delivery_details(request):
                     del request.session["delivery_key"]
                 return redirect("/dashboard")
             else:
+                disposition = Disposition.get_disposition_from_waybill(
+                    driver=driver,
+                    loading_city=delivery.loading_city,
+                    unloading_city=delivery.unloading_city,
+                    cargo=delivery.cargo,
+                )
                 context = {
-                    'form': NewDeliveryForm(instance=delivery)
+                    'form': NewDeliveryForm(instance=delivery),
+                    'disposition': disposition,
                 }
                 return render(request, "add_delivery_details.html", context)
         except Delivery.DoesNotExist:

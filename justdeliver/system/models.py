@@ -246,6 +246,20 @@ class Disposition(models.Model):
         except Disposition.DoesNotExist:
             return None
 
+    @staticmethod
+    def get_disposition_from_waybill(driver: Driver,
+                                     loading_city: str,
+                                     unloading_city: str,
+                                     cargo: str):
+        try:
+            disposition = Disposition.objects.get(driver=driver,
+                                                  loading_city=loading_city,
+                                                  unloading_city=unloading_city,
+                                                  cargo=cargo)
+            return disposition
+        except Disposition.DoesNotExist:
+            return None
+
 
 class VehicleBorrow(models.Model):
     driver = models.ForeignKey(Driver, on_delete=models.CASCADE)
