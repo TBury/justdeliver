@@ -197,6 +197,12 @@ class DeliveryScreenshot(models.Model):
                 delivery=delivery,
                 screenshot=screenshots.get("file"),
             )
+        elif len(screenshots) > 1:
+            for i in range(len(screenshots)):
+                DeliveryScreenshot.objects.create(
+                    delivery=delivery,
+                    screenshot=screenshots.get(f"file[{i}]")
+                )
         return delivery.delivery_key
 
 

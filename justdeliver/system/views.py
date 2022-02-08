@@ -15,6 +15,7 @@ def select_delivery_adding_mode(request):
 
 def upload_screenshots(request):
     if request.method == "POST":
+        print(request.FILES)
         delivery_key = DeliveryScreenshot.process_screenshots(
             user=request.user,
             screenshots=request.FILES,
