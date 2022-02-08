@@ -188,6 +188,17 @@ class DeliveryScreenshot(models.Model):
     def get_screenshots(delivery):
         return DeliveryScreenshot.objects.filter(delivery=delivery)
 
+    @staticmethod
+    def process_screenshots(user, screenshots):
+        driver = Driver.get_driver_by_user_profile(user)
+        delivery = Delivery.objects.create(driver=driver)
+        if len(screenshots) == 1:
+            DeliveryScreenshot.objects.create(
+                delivery=delivery,
+                screenshot=screenshots.get("file"),
+            )
+        return delivery.delivery_key
+
 
 class Offer(models.Model):
     TRAILERS = (

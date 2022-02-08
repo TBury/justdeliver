@@ -205,4 +205,21 @@ body {
   margin-bottom: 16px;
   font-size: 14px;
 }
+
+.screenshot_upload_button {
+  float: right;
+  cursor: pointer;
+  color: white;
+  background-color: #0071DC;
+  border: 0;
+  border-radius: 5px;
+  margin-top: 24px;
+  margin-right: 64px;
+  width: 170px;
+  padding: 10px;
+  font-weight: 700;
+  font-size: 16px;
+  text-align: center;
+  margin-bottom: 48px;
+}
 /*# sourceMappingURL=choose_delivery_method.css.map */
