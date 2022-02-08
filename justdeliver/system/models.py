@@ -50,11 +50,6 @@ class Driver(models.Model):
         total_income = Delivery.objects.filter(driver=self, is_edited=False).aggregate(Sum('income'))
         return total_income
 
-    @staticmethod
-    def get_driver_by_user_profile(user: User):
-        driver = Driver.objects.get(user=user)
-        return driver
-
     def get_statistics(self):
         statistics: dict[str, int] = {
             'distance': self.distance,
@@ -66,6 +61,7 @@ class Driver(models.Model):
 
     def get_driver_info(self):
         info: dict[Any, Any] = {
+            'avatar': self.avatar,
             'nick': self.nick,
             'statistics': self.get_statistics(),
             'disposition': Disposition.get_disposition_for_driver(self),
@@ -73,6 +69,11 @@ class Driver(models.Model):
             'last_deliveries': Delivery.get_last_deliveries_for_driver(self),
         }
         return info
+
+    @staticmethod
+    def get_driver_by_user_profile(user: User):
+        driver = Driver.objects.get(user=user)
+        return driver
 
     def __str__(self):
         return self.nick
@@ -165,10 +166,10 @@ class Delivery(models.Model):
     @staticmethod
     def get_last_deliveries_for_driver(driver: Driver):
         deliveries = []
-        accepted = Delivery.objects.filter(driver=driver, status='Zaakceptowana').order_by("-created_at")
-        sent = Delivery.objects.filter(driver=driver, status='Wysłana').order_by("-created_at")
-        to_edit = Delivery.objects.filter(driver=driver, status='Do poprawy').order_by("-created_at")
-        rejected = Delivery.objects.filter(driver=driver, status='Odrzucona').order_by("-created_at")
+        accepted = Delivery.objects.filter(driver=driver, status='Zaakceptowana', is_edited=False).order_by("-created_at")
+        sent = Delivery.objects.filter(driver=driver, status='Wysłana', is_edited=False).order_by("-created_at")
+        to_edit = Delivery.objects.filter(driver=driver, status='Do poprawy', is_edited=False).order_by("-created_at")
+        rejected = Delivery.objects.filter(driver=driver, status='Odrzucona', is_edited=False).order_by("-created_at")
         if rejected:
             deliveries.append(rejected)
         if to_edit:

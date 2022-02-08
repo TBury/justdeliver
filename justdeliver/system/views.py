@@ -37,6 +37,7 @@ def add_delivery_details(request):
             if request.method == "POST":
                 form = NewDeliveryForm(request.POST, instance=delivery)
                 if form.is_valid():
+                    delivery.is_edited = False
                     form.save()
                     del request.session["delivery_key"]
                 return redirect("/dashboard")
@@ -56,3 +57,12 @@ def add_delivery_details(request):
             return HttpResponse(status=403, content="Brak klucza dostawy.")
     else:
         return HttpResponse(status=403, content="Brak klucza dostawy.")
+
+
+def drivers_card(request):
+    driver = Driver.get_driver_by_user_profile(request.user)
+    info = driver.get_driver_info()
+    context = {
+        "info": info
+    }
+    return render(request, "drivers_card.html", context)
