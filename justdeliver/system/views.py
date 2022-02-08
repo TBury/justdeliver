@@ -66,3 +66,13 @@ def drivers_card(request):
         "info": info
     }
     return render(request, "drivers_card.html", context)
+
+def show_dispositions(request):
+    driver = Driver.get_driver_by_user_profile(request.user)
+    current_disposition = Disposition.get_disposition_for_driver(driver)
+    dispositions = Disposition.get_unaccepted_dispositions(driver)
+    context = {
+        'current_disposition': current_disposition,
+        'dispositions': dispositions,
+    }
+    return render(request, "dispositions.html", context)

@@ -49,12 +49,9 @@ body {
     border-radius: 5px;
     filter: drop-shadow(0px 3px 3px rgba(0, 0, 0, 0.25));
     width: 475px;
-    height: 200px;
+    height: 250px;
     padding-bottom: 20px;
-}
-
-.disposition--unfinished {
-    border-top: 5px solid #C51616;
+    border-top: 5px solid #0071DC;
 }
 
 .disposition__info__wrapper {
@@ -84,7 +81,7 @@ body {
 .disposition__status {
     padding-top: 4px;
     text-align: center;
-    width: 115px;
+    width: 125px;
     height: 20px;
     margin-right: 8px;
     margin-top: 16px;
@@ -94,9 +91,9 @@ body {
     user-select: none;
 }
 
-.status--not-finished {
-    background-color: #FFD2D2;
-    color: #C51616;
+.status--current-disposition {
+    background-color: #B8DCFF;
+    color: #0071DC;
 }
 
 .disposition__cities {
@@ -290,4 +287,66 @@ body {
 .button-container {
     margin-top: 48px;
     padding-bottom: 16px;
+}
+
+.disposition__actions {
+    margin-top: 24px;
+    margin-right: 8px;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+    gap: 8px;
+}
+
+.disposition__cancel {
+    border: 1px solid #C51616;
+    color: #C51616;
+    background-color: white;
+    border-radius: 5px;
+    cursor: pointer;
+    width: 125px;
+    height: 35px;
+    font-size: 14px;
+    font-weight: 700;
+}
+
+.disposition__delete-disposition {
+    display: flex;
+    flex-direction: row;
+    gap: 12px;
+    border: 1px solid #C51616;
+    color: #C51616;
+    background-color: white;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-bottom: 16px;
+    width: 185px;
+    height: 35px;
+    font-size: 14px;
+    padding: 5px;
+    font-weight: 700;
+}
+
+.delete-disposition-button__icon {
+    align-self: center;
+    margin-left: 8px;
+    margin-right: 8px;
+}
+
+.delete-disposition-button__text {
+    margin-top: 2px;
+}
+
+.disposition__accept {
+    background: #0071DC;
+    color: white;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-bottom: 16px;
+    width: 145px;
+    height: 35px;
+    font-size: 14px;
+    padding: 5px;
+    border: 0;
+    font-weight: 700;
 }

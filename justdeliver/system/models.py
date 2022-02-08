@@ -238,12 +238,28 @@ class Disposition(models.Model):
     tonnage = models.PositiveSmallIntegerField(default=0)
     created_at = models.DateTimeField(auto_now_add=True)
     deadline = models.DateTimeField()
+    is_accepted = models.BooleanField(default=False)
+
+    def change_accept(self):
+        try:
+            disposition = Disposition.objects.get(driver=driver, is_accepted=True)
+            return "Istnieje już zaakceptowana dyspozycja! Ukończ ją przed akceptacją drugiej."
+        except Disposition.DoesNotExist:
+            self.is_accepted = True
 
     @staticmethod
     def get_disposition_for_driver(driver: Driver):
         try:
-            disposition = Disposition.objects.get(driver=driver)
+            disposition = Disposition.objects.get(driver=driver, is_accepted=True)
             return disposition
+        except Disposition.DoesNotExist:
+            return None
+
+    @staticmethod
+    def get_unaccepted_dispositions(driver: Driver):
+        try:
+            dispositions = Disposition.objects.filter(driver=driver, is_accepted=False)
+            return dispositions
         except Disposition.DoesNotExist:
             return None
 

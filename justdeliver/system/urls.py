@@ -7,4 +7,5 @@ urlpatterns = [
     path('api/Delivery/send-screenshots', views.upload_screenshots, name="upload_screenshots"),
     path('Deliveries/add-delivery-details', views.add_delivery_details),
     path('drivers-card/', views.drivers_card),
+    path('dispositions/', views.show_dispositions),
 ]
