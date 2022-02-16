@@ -1,8 +1,14 @@
 from typing import Dict, Any
 from uuid import uuid4
+from random import randrange
+import os
+import json
 from django.db import models
 from django.db.models import Sum
 from django.contrib.auth.models import User
+from django.conf import settings as django_settings
+
+
 
 
 class Driver(models.Model):
@@ -255,6 +261,32 @@ class Disposition(models.Model):
             return "Istnieje już zaakceptowana dyspozycja! Ukończ ją przed akceptacją drugiej."
         except Disposition.DoesNotExist:
             self.is_accepted = True
+
+    @staticmethod
+    def generate_disposition(driver: Driver, deadline):
+        cities_file = open(os.path.join(django_settings.STATIC_ROOT, 'files/cities.json'), "r", encoding="UTF-8")
+        cities = json.loads(cities_file.read())
+        cities_file.close()
+        try:
+            loading_city_number = randrange(0, 564)
+            unloading_city_number = randrange(0, 564)
+            loading_companies_count = len(cities["response"][loading_city_number]["companies"]) - 1
+            unloading_companies_count = len(cities["response"][unloading_city_number]["companies"]) - 1
+            loading_spedition_number = randrange(0, loading_companies_count)
+            unloading_spedition_number = randrange(0, unloading_companies_count)
+        except IndexError:
+            return None
+
+        Disposition.objects.create(
+            driver = driver,
+            loading_city = cities["response"][loading_city_number]["realName"],
+            loading_spedition = cities["response"][loading_city_number]["companies"][loading_spedition_number],
+            unloading_city = cities["response"][unloading_city_number]["realName"],
+            unloading_spedition = cities["response"][unloading_city_number]["companies"][unloading_spedition_number],
+            cargo = "test",
+            tonnage = "22",
+            deadline = deadline
+        )
 
     @staticmethod
     def get_disposition_for_driver(driver: Driver):

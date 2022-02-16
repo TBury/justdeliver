@@ -63,7 +63,7 @@ body {
 .basic-delivery-details-container {
   display: -ms-grid;
   display: grid;
-  -ms-grid-columns: (500px);
+  -ms-grid-columns: (500px)[2];
       grid-template-columns: repeat(2, 500px);
   margin-bottom: 48px;
   margin-top: 16px;
@@ -176,7 +176,7 @@ input {
 .delivery-statistics-container {
   display: -ms-grid;
   display: grid;
-  -ms-grid-columns: (250px);
+  -ms-grid-columns: (250px)[3];
       grid-template-columns: repeat(3, 250px);
   margin-bottom: 48px;
   margin-top: 16px;
