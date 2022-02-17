@@ -341,6 +341,9 @@ class Disposition(models.Model):
             except TypeError:
                 print(f"{unloading_city} has no companies. Refer to cities.json file.")
                 unloading_spedition = "Dowolna"
+            except ValueError:
+                print(f"{unloading_city} has no companies. Refer to cities.json file.")
+                unloading_spedition = "Dowolna"
         except IndexError:
             return None
 
@@ -352,7 +355,7 @@ class Disposition(models.Model):
             unloading_spedition = unloading_spedition,
             cargo = "test",
             tonnage = "22",
-            deadline = "2022-02-17 13:50"
+            deadline = data.get("deadline")
         )
         return True
 
