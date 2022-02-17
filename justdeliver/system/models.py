@@ -256,12 +256,35 @@ class Disposition(models.Model):
     deadline = models.DateTimeField()
     is_accepted = models.BooleanField(default=False)
 
-    def change_accept(self):
+    @staticmethod
+    def accept_disposition(driver, id):
         try:
-            disposition = Disposition.objects.get(driver=driver, is_accepted=True)
-            return "Istnieje już zaakceptowana dyspozycja! Ukończ ją przed akceptacją drugiej."
+            accepted = Disposition.objects.filter(driver=driver, is_accepted=True)
+            if not accepted:
+                disposition = Disposition.objects.get(driver=driver, id=id)
+                disposition.is_accepted = True
+                disposition.save()
+            else:
+                return "Istnieje już zaakceptowana dyspozycja! Ukończ ją przed akceptacją drugiej."
         except Disposition.DoesNotExist:
-            self.is_accepted = True
+            return "Nie znaleziono dyspozycji o danym id."
+
+    @staticmethod
+    def cancel_disposition(driver, id):
+        try:
+            disposition = Disposition.objects.get(driver=driver, id=id, is_accepted=True)
+            disposition.is_accepted = False
+            disposition.save()
+        except Disposition.DoesNotExist:
+            return "Nie znaleziono dyspozycji o danym id."
+
+    @staticmethod
+    def delete_disposition(driver, id):
+        try:
+            disposition = Disposition.objects.get(driver=driver, id=id)
+            disposition.delete()
+        except Disposition.DoesNotExist:
+            return "Nie znaleziono dyspozycji o danym id."
 
     @staticmethod
     def generate_disposition(driver: Driver, data: Dict):

@@ -10,4 +10,7 @@ urlpatterns = [
     path('dispositions/', views.show_dispositions),
     path('vehicles/', views.show_vehicles),
     path('Dispositions/generate-disposition', views.generate_disposition),
+    path('Dispositions/AcceptDisposition/<int:disposition_id>', views.accept_disposition),
+    path('Dispositions/DeleteDisposition/<int:disposition_id>', views.delete_disposition),
+    path('Dispositions/CancelDisposition/<int:disposition_id>', views.cancel_disposition),
 ]

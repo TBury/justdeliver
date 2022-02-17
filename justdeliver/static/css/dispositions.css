@@ -28,7 +28,16 @@ body {
 .dispositions__generate-disposition {
   float: right;
   margin-right: 64px;
-  cursor: pointer;
+  text-decoration: none;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
   color: white;
   background-color: #0071DC;
   border: 0;
@@ -392,7 +401,17 @@ body {
   color: #C51616;
   background-color: white;
   border-radius: 5px;
-  cursor: pointer;
+  text-decoration: none;
+  text-align: center;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
   width: 125px;
   height: 35px;
   font-size: 14px;
@@ -412,39 +431,42 @@ body {
   color: #C51616;
   background-color: white;
   border-radius: 5px;
-  cursor: pointer;
   margin-bottom: 16px;
   width: 185px;
   height: 35px;
   font-size: 14px;
-  padding: 5px;
   font-weight: 700;
-}
-
-.delete-disposition-button__icon {
-  -ms-flex-item-align: center;
-      -ms-grid-row-align: center;
-      align-self: center;
-  margin-left: 8px;
-  margin-right: 8px;
-}
-
-.delete-disposition-button__text {
-  margin-top: 2px;
+  text-decoration: none;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
 }
 
 .disposition__accept {
   background: #0071DC;
   color: white;
   border-radius: 5px;
-  cursor: pointer;
+  text-decoration: none;
+  text-align: center;
   margin-bottom: 16px;
   width: 145px;
   height: 35px;
   font-size: 14px;
-  padding: 5px;
   border: 0;
   font-weight: 700;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  padding: 1px;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
 }
 
 select {

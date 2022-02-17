@@ -98,3 +98,30 @@ def generate_disposition(request):
         else:
             return HttpResponse(status=403, content="Błąd generowania dyspozycji.")
     return render(request, "generate_disposition.html")
+
+
+def accept_disposition(request, disposition_id):
+    driver = Driver.get_driver_by_user_profile(request.user)
+    try:
+        Disposition.accept_disposition(driver, disposition_id)
+        return redirect("/dispositions")
+    except Disposition.DoesNotExist:
+        return HttpResponse(status=403, content="Dyspozycja nie istnieje.")
+
+
+def delete_disposition(request, disposition_id):
+    driver = Driver.get_driver_by_user_profile(request.user)
+    try:
+        Disposition.delete_disposition(driver, disposition_id)
+        return redirect("/dispositions")
+    except Disposition.DoesNotExist:
+        return HttpResponse(status=403, content="Dyspozycja nie istnieje.")
+
+
+def cancel_disposition(request, disposition_id):
+    driver = Driver.get_driver_by_user_profile(request.user)
+    try:
+        Disposition.cancel_disposition(driver, disposition_id)
+        return redirect("/dispositions")
+    except Disposition.DoesNotExist:
+        return HttpResponse(status=403, content="Dyspozycja nie istnieje.")
