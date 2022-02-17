@@ -414,9 +414,12 @@ label {
     margin-left: 48px;
 }
 
-
-
 #auto-loading-city {
     width: 24px;
     height: 24px;
+}
+
+#loading-city-container,
+#unloading-city-container {
+    display: none;
 }

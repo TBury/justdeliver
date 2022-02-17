@@ -511,4 +511,9 @@ label {
   width: 24px;
   height: 24px;
 }
+
+#loading-city-container,
+#unloading-city-container {
+  display: none;
+}
 /*# sourceMappingURL=dispositions.css.map */
