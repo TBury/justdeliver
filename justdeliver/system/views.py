@@ -92,6 +92,7 @@ def show_vehicles(request):
 
 def generate_disposition(request):
     if request.POST:
+        print(request.POST)
         driver = Driver.get_driver_by_user_profile(request.user)
         if Disposition.generate_disposition(driver, request.POST):
             return redirect("/dashboard")

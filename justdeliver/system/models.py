@@ -177,6 +177,7 @@ class Delivery(models.Model):
     status = models.CharField(max_length=16, choices=DELIVERY_STATUS, default="Wysłana")
     is_edited = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
+    accepted_at = models.DateTimeField(null=True, blank=True)
 
     @staticmethod
     def get_last_deliveries_for_driver(driver: Driver):
@@ -269,52 +270,72 @@ class Disposition(models.Model):
         cities_file.close()
 
         try:
-            loading_country = data.get("loading_country")
-            unloading_country = data.get("unloading_country")
-            if loading_country != "random":
-                loading_cities = []
+            if data.get("auto-loading-city"):
+                last_accepted_waybill = Delivery.objects.order_by("-accepted_at").first()
                 for json_city in cities["response"]:
-                    if json_city.get("country") == loading_country:
-                        #if there is promods checked, get only cities with mod="promods"
-                        if data.get("promods") and json_city.get("mod") == "promods":
-                            loading_cities.append(json_city)
-
-                        #if not, then omit all promods cities
-                        elif not data.get("promods") and json_city.get("mod") != "promods":
-                            loading_cities.append(json_city)
-                loading_city_number = randrange(0, len(loading_cities))
-                loading_city = loading_cities[loading_city_number]
+                    if json_city.get("realName") == last_accepted_waybill.unloading_city:
+                        loading_city = json_city
+                        break
+                if not loading_city:
+                    print(f"Error: {loading_city} not found in cities list.")
+                    return None
             else:
-                if data.get("promods"):
-                    loading_city_number = randrange(0, 564)
+                loading_country = data.get("loading_country")
+                unloading_country = data.get("unloading_country")
+                if loading_country != "random":
+                    loading_cities = []
+                    for json_city in cities["response"]:
+                        if json_city.get("country") == loading_country:
+                            #If there isn't promods checked, we need only no-promods cities
+                            if not "promods" in data.get("modification"):
+                                if json_city.get("mod") != "promods":
+                                    loading_cities.append(json_city)
+                            #if not, all cities within country are ok
+                            else:
+                                loading_cities.append(json_city)
+                    loading_city_number = randrange(0, len(loading_cities))
+                    loading_city = loading_cities[loading_city_number]
                 else:
-                    loading_city_number = randrange(0, 279)
-                loading_city = cities["response"][loading_city_number]
+                    if "promods" in data.get("modification"):
+                        loading_city_number = randrange(0, 564)
+                    else:
+                        loading_city_number = randrange(0, 279)
+                    loading_city = cities["response"][loading_city_number]
 
             if unloading_country != "random":
                 unloading_cities = []
                 for json_city in cities["response"]:
                     if json_city.get("country") == unloading_country:
-                        if data.get("promods") and json_city.get("mod") == "promods":
+                        if "promods" in data.get("modification") and json_city.get("mod") == "promods":
                             unloading_cities.append(json_city)
-                        elif not data.get("promods") and json_city.get("mod") != "promods":
+                        elif not "promods" in data.get("modification") and json_city.get("mod") != "promods":
                             unloading_cities.append(json_city)
                 unloading_city_number = randrange(0, len(unloading_cities))
                 unloading_city = unloading_cities[unloading_city_number]
             else:
-                if data.get("promods"):
+                if "promods" in data.get("modification"):
                     unloading_city_number = randrange(0, 564)
                 else:
                     unloading_city_number = randrange(0, 279)
                 unloading_city = cities["response"][unloading_city_number]
 
-            loading_companies_count = len(loading_city.get("companies")) - 1
-            unloading_companies_count = len(unloading_city.get("companies")) - 1
-            loading_spedition_number = randrange(0, loading_companies_count)
-            unloading_spedition_number = randrange(0, unloading_companies_count)
+            try:
+                loading_companies_count = len(loading_city.get("companies")) - 1
+                loading_spedition_number = randrange(0, loading_companies_count)
+                loading_spedition = loading_city["companies"][loading_spedition_number]
 
-            loading_spedition = loading_city["companies"][loading_spedition_number]
-            unloading_spedition = unloading_city["companies"][unloading_spedition_number]
+            except TypeError:
+                print(f"{loading_city} has no companies. Refer to cities.json file.")
+                loading_spedition = "Dowolna"
+
+            try:
+                unloading_companies_count = len(unloading_city.get("companies")) - 1
+                unloading_spedition_number = randrange(0, unloading_companies_count)
+                unloading_spedition = unloading_city["companies"][unloading_spedition_number]
+
+            except TypeError:
+                print(f"{unloading_city} has no companies. Refer to cities.json file.")
+                unloading_spedition = "Dowolna"
         except IndexError:
             return None
 
