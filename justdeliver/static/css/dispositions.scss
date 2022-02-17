@@ -267,10 +267,6 @@ body {
     color: #044f9b;
 }
 
-.trailer__name {
-    margin: 10px 16px 5px 16px;
-}
-
 .options-container {
     margin-left: 32px;
     display: flex;
@@ -422,4 +418,8 @@ label {
 #loading-city-container,
 #unloading-city-container {
     display: none;
+}
+
+#unloading-city-container {
+    grid-column: 2;
 }

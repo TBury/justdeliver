@@ -296,8 +296,9 @@ class Disposition(models.Model):
                     loading_city_number = randrange(0, len(loading_cities))
                     loading_city = loading_cities[loading_city_number]
                 else:
-                    if "promods" in data.get("modification"):
-                        loading_city_number = randrange(0, 564)
+                    if data.get("modification"):
+                        if "promods" in data.get("modification"):
+                            loading_city_number = randrange(0, 564)
                     else:
                         loading_city_number = randrange(0, 279)
                     loading_city = cities["response"][loading_city_number]
@@ -306,15 +307,19 @@ class Disposition(models.Model):
                 unloading_cities = []
                 for json_city in cities["response"]:
                     if json_city.get("country") == unloading_country:
-                        if "promods" in data.get("modification") and json_city.get("mod") == "promods":
-                            unloading_cities.append(json_city)
-                        elif not "promods" in data.get("modification") and json_city.get("mod") != "promods":
+                        if data.get("modification"):
+                            if not "promods" in data.get("modification"):
+                                if json_city.get("mod") != "promods":
+                                    unloading_cities.append(json_city)
+                        # if not, all cities within country are ok
+                        else:
                             unloading_cities.append(json_city)
                 unloading_city_number = randrange(0, len(unloading_cities))
                 unloading_city = unloading_cities[unloading_city_number]
             else:
-                if "promods" in data.get("modification"):
-                    unloading_city_number = randrange(0, 564)
+                if data.get("modification"):
+                    if "promods" in data.get("modification"):
+                        unloading_city_number = randrange(0, 564)
                 else:
                     unloading_city_number = randrange(0, 279)
                 unloading_city = cities["response"][unloading_city_number]
