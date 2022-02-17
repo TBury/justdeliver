@@ -90,12 +90,11 @@ def show_vehicles(request):
     return render(request, "vehicles.html", context)
 
 
-def generate_disposition_form(request):
-    return render(request, "generate_disposition.html")
-
-
 def generate_disposition(request):
-    #TODO: take driver from url
-    driver = Driver.get_driver_by_user_profile(request.user)
-    Disposition.generate_disposition(driver, "2022-02-24 10:00")
-    return redirect("/dashboard")
+    if request.POST:
+        driver = Driver.get_driver_by_user_profile(request.user)
+        if Disposition.generate_disposition(driver, request.POST):
+            return redirect("/dashboard")
+        else:
+            return HttpResponse(status=403, content="Błąd generowania dyspozycji.")
+    return render(request, "generate_disposition.html")

@@ -9,6 +9,5 @@ urlpatterns = [
     path('drivers-card/', views.drivers_card),
     path('dispositions/', views.show_dispositions),
     path('vehicles/', views.show_vehicles),
-    path('Dispositions/generate-disposition', views.generate_disposition_form),
-    path('api/generate-disposition', views.generate_disposition),
+    path('Dispositions/generate-disposition', views.generate_disposition),
 ]

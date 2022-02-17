@@ -263,30 +263,72 @@ class Disposition(models.Model):
             self.is_accepted = True
 
     @staticmethod
-    def generate_disposition(driver: Driver, deadline):
+    def generate_disposition(driver: Driver, data: Dict):
         cities_file = open(os.path.join(django_settings.STATIC_ROOT, 'files/cities.json'), "r", encoding="UTF-8")
         cities = json.loads(cities_file.read())
         cities_file.close()
+
         try:
-            loading_city_number = randrange(0, 564)
-            unloading_city_number = randrange(0, 564)
-            loading_companies_count = len(cities["response"][loading_city_number]["companies"]) - 1
-            unloading_companies_count = len(cities["response"][unloading_city_number]["companies"]) - 1
+            loading_country = data.get("loading_country")
+            unloading_country = data.get("unloading_country")
+            if loading_country != "random":
+                loading_cities = []
+                for json_city in cities["response"]:
+                    if json_city.get("country") == loading_country:
+                        #if there is promods checked, get only cities with mod="promods"
+                        if data.get("promods") and json_city.get("mod") == "promods":
+                            loading_cities.append(json_city)
+
+                        #if not, then omit all promods cities
+                        elif not data.get("promods") and json_city.get("mod") != "promods":
+                            loading_cities.append(json_city)
+                loading_city_number = randrange(0, len(loading_cities))
+                loading_city = loading_cities[loading_city_number]
+            else:
+                if data.get("promods"):
+                    loading_city_number = randrange(0, 564)
+                else:
+                    loading_city_number = randrange(0, 279)
+                loading_city = cities["response"][loading_city_number]
+
+            if unloading_country != "random":
+                unloading_cities = []
+                for json_city in cities["response"]:
+                    if json_city.get("country") == unloading_country:
+                        if data.get("promods") and json_city.get("mod") == "promods":
+                            unloading_cities.append(json_city)
+                        elif not data.get("promods") and json_city.get("mod") != "promods":
+                            unloading_cities.append(json_city)
+                unloading_city_number = randrange(0, len(unloading_cities))
+                unloading_city = unloading_cities[unloading_city_number]
+            else:
+                if data.get("promods"):
+                    unloading_city_number = randrange(0, 564)
+                else:
+                    unloading_city_number = randrange(0, 279)
+                unloading_city = cities["response"][unloading_city_number]
+
+            loading_companies_count = len(loading_city.get("companies")) - 1
+            unloading_companies_count = len(unloading_city.get("companies")) - 1
             loading_spedition_number = randrange(0, loading_companies_count)
             unloading_spedition_number = randrange(0, unloading_companies_count)
+
+            loading_spedition = loading_city["companies"][loading_spedition_number]
+            unloading_spedition = unloading_city["companies"][unloading_spedition_number]
         except IndexError:
             return None
 
         Disposition.objects.create(
             driver = driver,
-            loading_city = cities["response"][loading_city_number]["realName"],
-            loading_spedition = cities["response"][loading_city_number]["companies"][loading_spedition_number],
-            unloading_city = cities["response"][unloading_city_number]["realName"],
-            unloading_spedition = cities["response"][unloading_city_number]["companies"][unloading_spedition_number],
+            loading_city = loading_city.get("realName"),
+            loading_spedition = loading_spedition,
+            unloading_city = unloading_city.get("realName"),
+            unloading_spedition = unloading_spedition,
             cargo = "test",
             tonnage = "22",
-            deadline = deadline
+            deadline = "2022-02-17 13:50"
         )
+        return True
 
     @staticmethod
     def get_disposition_for_driver(driver: Driver):
