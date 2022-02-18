@@ -38,7 +38,8 @@ body {
 .edit-vehicle-container__title,
 .manufacturer__title,
 .models__title,
-.vehicle-details__title {
+.vehicle-details__title,
+.cabins__title {
   color: #9c9c9c;
   font-weight: 700;
   font-size: 14px;
@@ -51,59 +52,10 @@ body {
   font-size: 24px;
 }
 
-.upload-photo-container {
-  margin-top: 48px;
-  margin-left: 48px;
-  display: -webkit-box;
-  display: -ms-flexbox;
-  display: flex;
-  -webkit-box-orient: vertical;
-  -webkit-box-direction: normal;
-      -ms-flex-direction: column;
-          flex-direction: column;
-  -ms-flex-line-pack: center;
-      align-content: center;
-  border: 1px dashed #9c9c9c;
-  height: 250px;
-  width: 75%;
-  cursor: pointer;
-}
-
-.upload-photo-container__icon {
-  -ms-flex-item-align: center;
-      -ms-grid-row-align: center;
-      align-self: center;
-  margin-top: 48px;
-  -webkit-user-select: none;
-     -moz-user-select: none;
-      -ms-user-select: none;
-          user-select: none;
-}
-
-.upload-photo-container__title {
-  text-align: center;
-  font-weight: 700;
-  font-size: 24px;
-  margin-bottom: 0;
-  -webkit-user-select: none;
-     -moz-user-select: none;
-      -ms-user-select: none;
-          user-select: none;
-}
-
-.upload-photo-container__description {
-  text-align: center;
-  font-size: 16px;
-  color: #9c9c9c;
-  -webkit-user-select: none;
-     -moz-user-select: none;
-      -ms-user-select: none;
-          user-select: none;
-}
-
 .edit-vehicle-container__manufacturer-container,
 .models__container,
-.vehicle-details__container {
+.vehicle-details__container,
+.cabins__container {
   margin-left: 48px;
   display: -webkit-box;
   display: -ms-flexbox;
@@ -116,7 +68,8 @@ body {
 }
 
 .manufacturer,
-.model {
+.model,
+.cabin {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -132,30 +85,20 @@ body {
   border: 1px solid #9c9c9c;
   min-width: 80px;
   font-size: 14px;
-}
-
-.manufacturer {
   border-radius: 5px;
 }
 
-.manufacturer__name {
-  margin-left: 16px;
-  margin-right: 16px;
+.manufacturer,
+.cabin {
+  padding-left: 15px;
+  padding-right: 15px;
 }
 
 .manufacturer--selected,
-.model--selected {
+.model--selected,
+.cabin--selected {
   border: 1px solid #0071dc;
   color: #0071dc;
-}
-
-.model {
-  border-radius: 20px;
-}
-
-.model__name {
-  margin-left: 24px;
-  margin-right: 24px;
 }
 
 .vehicle-details__input-container {
@@ -175,11 +118,25 @@ body {
   margin-bottom: 8px;
 }
 
-.form__input {
+input {
   width: 150px;
   height: 32px;
   border: 1px solid #d8d8d8;
   padding-left: 12px;
+}
+
+input[type="checkbox"] {
+  width: 24px;
+  height: 24px;
+  border: 1px solid #d8d8d8;
+}
+
+select {
+  background-color: white;
+  width: 180px;
+  border: 1px solid #d8d8d8;
+  height: 40px;
+  padding-left: 8px;
 }
 
 .form__input--chassis-input,
@@ -197,6 +154,9 @@ body {
   -webkit-box-direction: normal;
       -ms-flex-direction: row;
           flex-direction: row;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
 }
 
 .options__label {
@@ -240,5 +200,60 @@ body {
   font-weight: 700;
   font-size: 16px;
   text-align: center;
+}
+
+[type="file"] {
+  height: 0;
+  width: 0;
+  overflow: hidden;
+  display: none;
+}
+
+[type="file"] + label {
+  font-weight: 700;
+  font-size: 14px;
+  font-family: sans-serif;
+  background: white;
+  padding: 10px 30px;
+  border: 1px solid #0071dc;
+  border-radius: 3px;
+  color: #0071dc;
+  cursor: pointer;
+  -webkit-transition: all 0.2s;
+  transition: all 0.2s;
+  width: 180px;
+  text-align: center;
+}
+
+[type="file"] + label:hover {
+  background-color: #0071dc;
+  color: white;
+}
+
+.upload-photo-container {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  margin-left: 48px;
+}
+
+#preview {
+  -ms-flex-item-align: start;
+      align-self: flex-start;
+  max-width: 500px;
+  max-height: 500px;
+  margin-bottom: 48px;
+}
+
+#id_engine,
+#id_chassis,
+#id_model,
+#id_manufacturer,
+#id_cabin {
+  display: none;
 }
 /*# sourceMappingURL=edit_vehicle.css.map */

@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from .models import Driver, Disposition, DeliveryScreenshot, Delivery, Vehicle
-from .forms import NewDeliveryForm
+from .forms import NewDeliveryForm, NewVehicleForm
 
 
 def dashboard(request):
@@ -79,17 +79,6 @@ def show_dispositions(request):
     return render(request, "dispositions.html", context)
 
 
-def show_vehicles(request):
-    driver = Driver.get_driver_by_user_profile(request.user)
-    current_vehicle = Vehicle.get_vehicle_for_driver(driver)
-    vehicles = Vehicle.get_driver_vehicles(driver)
-    context = {
-        'current_vehicle': current_vehicle,
-        'vehicles': vehicles,
-    }
-    return render(request, "vehicles.html", context)
-
-
 def generate_disposition(request):
     if request.POST:
         driver = Driver.get_driver_by_user_profile(request.user)
@@ -125,3 +114,33 @@ def cancel_disposition(request, disposition_id):
         return redirect("/dispositions")
     except Disposition.DoesNotExist:
         return HttpResponse(status=403, content="Dyspozycja nie istnieje.")
+
+
+def show_vehicles(request):
+    driver = Driver.get_driver_by_user_profile(request.user)
+    current_vehicle = Vehicle.get_vehicle_for_driver(driver)
+    vehicles = Vehicle.get_driver_vehicles(driver)
+    context = {
+        'current_vehicle': current_vehicle,
+        'vehicles': vehicles,
+    }
+    return render(request, "vehicles.html", context)
+
+
+def add_new_vehicle(request):
+    if request.method == "POST":
+        form = NewVehicleForm(request.POST)
+        if form.is_valid():
+            driver = Driver.get_driver_by_user_profile(request.user)
+            vehicle = form.save(commit=False)
+            vehicle.driver_owner = driver
+            vehicle.photo = request.FILES.get("photo")
+            vehicle.save()
+            return redirect("/vehicles")
+        else:
+            print(form.errors)
+    else:
+        context = {
+            'form': NewVehicleForm(),
+        }
+        return render(request, "add_new_vehicle.html", context)
