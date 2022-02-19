@@ -177,12 +177,20 @@ body {
   cursor: pointer;
   margin-bottom: 16px;
   width: 165px;
-  height: 35px;
+  height: 45px;
   font-size: 14px;
-  padding: 5px;
   border: 0;
   font-weight: 700;
   border-radius: 5px;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
 }
 
 .vehicle__edit-vehicle-button,
@@ -195,12 +203,19 @@ body {
       -ms-flex-direction: row;
           flex-direction: row;
   gap: 12px;
+  text-align: center;
 }
 
 .vehicle__edit-vehicle-button {
   background: white;
   border: 1px solid #0071DC;
   color: #0071DC;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
 }
 
 .vehicle__select-vehicle-button {
@@ -226,5 +241,9 @@ body {
 .edit-vehicle-button__text,
 .delete-vehicle-button__text {
   margin-top: 2px;
+}
+
+a {
+  text-decoration: none;
 }
 /*# sourceMappingURL=vehicles.css.map */

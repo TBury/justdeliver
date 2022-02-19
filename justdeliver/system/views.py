@@ -169,3 +169,11 @@ def edit_vehicle(request, vehicle_id):
             return render(request, "edit_vehicle.html", context)
     else:
         return HttpResponse(status=403, content="Pojazd nie istnieje.")
+
+
+def select_vehicle(request, vehicle_id):
+    driver = Driver.get_driver_by_user_profile(request.user)
+    messages = Vehicle.change_selected_vehicle(driver, vehicle_id)
+    if messages.get("error"):
+        return HttpResponse(status=403, content="Pojazd nie istnieje.")
+    return redirect("/vehicles")

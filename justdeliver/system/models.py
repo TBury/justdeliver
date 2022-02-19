@@ -161,6 +161,15 @@ class Vehicle(models.Model):
         except Vehicle.DoesNotExist:
             return None
 
+    @staticmethod
+    def change_selected_vehicle(driver: Driver, vehicle_id: int):
+        try:
+            current_vehicle = Vehicle.objects.filter(driver_owner=driver, driver=driver).update(driver=None)
+            new_selected_vehicle = Vehicle.objects.filter(driver_owner=driver, id=vehicle_id).update(driver=driver)
+            return {"message": "Pojazd zaktualizowany poprawnie."}
+        except Vehicle.DoesNotExist:
+            return {"error": "Pojazd nie istnieje."}
+
 
 class Delivery(models.Model):
     DELIVERY_STATUS = (

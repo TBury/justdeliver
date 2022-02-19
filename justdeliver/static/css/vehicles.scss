@@ -149,12 +149,14 @@ body {
     cursor: pointer;
     margin-bottom: 16px;
     width: 165px;
-    height: 35px;
+    height: 45px;
     font-size: 14px;
-    padding: 5px;
     border: 0;
     font-weight: 700;
     border-radius: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .vehicle__edit-vehicle-button,
@@ -162,12 +164,15 @@ body {
     display: flex;
     flex-direction: row;
     gap: 12px;
+    text-align: center;
 }
 
 .vehicle__edit-vehicle-button {
     background: white;
     border: 1px solid #0071DC;
     color: #0071DC;
+    align-items: center;
+    justify-content: center;
 }
 
 .vehicle__select-vehicle-button {
@@ -191,4 +196,8 @@ body {
 .edit-vehicle-button__text,
 .delete-vehicle-button__text {
     margin-top: 2px;
+}
+
+a {
+    text-decoration: none;
 }
