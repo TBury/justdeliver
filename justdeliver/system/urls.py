@@ -14,4 +14,5 @@ urlpatterns = [
     path('Dispositions/CancelDisposition/<int:disposition_id>', views.cancel_disposition),
     path('vehicles/', views.show_vehicles),
     path('vehicles/add-new-vehicle', views.add_new_vehicle),
+    path('Vehicles/EditVehicle/<int:vehicle_id>', views.edit_vehicle),
 ]

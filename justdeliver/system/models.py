@@ -153,6 +153,14 @@ class Vehicle(models.Model):
         except Vehicle.DoesNotExist:
             return None
 
+    @staticmethod
+    def get_vehicle_from_id(driver: Driver, vehicle_id: int):
+        try:
+            vehicle = Vehicle.objects.get(driver_owner=driver, id=vehicle_id)
+            return vehicle
+        except Vehicle.DoesNotExist:
+            return None
+
 
 class Delivery(models.Model):
     DELIVERY_STATUS = (

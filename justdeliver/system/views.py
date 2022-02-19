@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from .models import Driver, Disposition, DeliveryScreenshot, Delivery, Vehicle
-from .forms import NewDeliveryForm, NewVehicleForm
+from .forms import NewDeliveryForm, NewVehicleForm, EditVehicleForm
 
 
 def dashboard(request):
@@ -144,3 +144,28 @@ def add_new_vehicle(request):
             'form': NewVehicleForm(),
         }
         return render(request, "add_new_vehicle.html", context)
+
+
+def edit_vehicle(request, vehicle_id):
+    driver = Driver.get_driver_by_user_profile(request.user)
+    vehicle = Vehicle.get_vehicle_from_id(driver, vehicle_id)
+    if vehicle:
+        if request.method == "POST":
+            form = EditVehicleForm(request.POST, instance=vehicle)
+            if form.is_valid():
+                edited_vehicle = form.save(commit=False)
+                edited_vehicle.driver_owner = driver
+                if request.FILES.get("photo"):
+                    edited_vehicle.photo = request.FILES.get("photo")
+                edited_vehicle.save()
+                return redirect("/vehicles")
+            else:
+                print(form.errors)
+        else:
+            context = {
+                'form': EditVehicleForm(instance=vehicle),
+                'vehicle': vehicle,
+            }
+            return render(request, "edit_vehicle.html", context)
+    else:
+        return HttpResponse(status=403, content="Pojazd nie istnieje.")
