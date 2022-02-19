@@ -1,14 +1,14 @@
-from typing import Dict, Any
-from uuid import uuid4
-from random import randrange
-import os
 import json
+import os
+from django.conf import settings as django_settings
+from django.contrib.auth.models import User
 from django.db import models
 from django.db.models import Sum
-from django.contrib.auth.models import User
-from django.conf import settings as django_settings
-
-
+from random import randrange
+from typing import Dict, Any
+from uuid import uuid4
+from huey import crontab
+from huey.contrib import djhuey as huey
 
 
 class Driver(models.Model):
@@ -257,8 +257,71 @@ class Offer(models.Model):
     cargo = models.CharField(max_length=64)
     tonnage = models.PositiveSmallIntegerField(default=0)
     income = models.PositiveIntegerField(default=0)
-    trailer = models.CharField(max_length=16, choices=TRAILERS)
+    trailer = models.CharField(max_length=16, choices=TRAILERS, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
+
+    @staticmethod
+    def generate_offer(promods: bool):
+        cities_file = open(os.path.join(django_settings.STATIC_ROOT, 'files/cities.json'), "r", encoding="UTF-8")
+        cities = json.loads(cities_file.read())
+        cities_file.close()
+
+        if promods:
+            loading_city_number = randrange(0, 564)
+            unloading_city_number = randrange(0, 564)
+        else:
+            loading_city_number = randrange(0, 279)
+            unloading_city_number = randrange(0, 279)
+
+        loading_city = cities["response"][loading_city_number]
+        unloading_city = cities["response"][unloading_city_number]
+
+        try:
+            loading_companies_count = len(loading_city.get("companies")) - 1
+            loading_spedition_number = randrange(0, loading_companies_count)
+            loading_spedition = loading_city["companies"][loading_spedition_number]
+
+        except TypeError:
+            print(f"{loading_city.get('realName')} has no companies. Refer to cities.json file.")
+            loading_spedition = "Dowolna"
+        except ValueError:
+            print(f"{loading_city.get('realName')} has no companies. Refer to cities.json file.")
+            loading_spedition = "Dowolna"
+
+        try:
+            unloading_companies_count = len(unloading_city.get("companies")) - 1
+            unloading_spedition_number = randrange(0, unloading_companies_count)
+            unloading_spedition = unloading_city["companies"][unloading_spedition_number]
+
+        except TypeError:
+            print(f"{unloading_city.get('realName')} has no companies. Refer to cities.json file.")
+            unloading_spedition = "Dowolna"
+        except ValueError:
+            print(f"{unloading_city.get('realName')} has no companies. Refer to cities.json file.")
+            unloading_spedition = "Dowolna"
+
+        income = randrange(5000, 65535)
+
+        Offer.objects.create(
+            loading_city=loading_city.get("realName"),
+            loading_spedition=loading_spedition,
+            unloading_city=unloading_city.get("realName"),
+            unloading_spedition=unloading_spedition,
+            cargo="test",
+            tonnage="22",
+            income=income,
+        )
+        return True
+
+
+    @staticmethod
+    @huey.periodic_task(crontab(day='*/1'))
+    def generate_offers():
+        for _ in range(350):
+            Offer.generate_offer(promods=False)
+
+        for _ in range(100):
+            Offer.generate_offer(promods=True)
 
 
 class Disposition(models.Model):
