@@ -1,12 +1,15 @@
 import json
 import os
+from random import randrange
+from typing import Dict, Any
+from uuid import uuid4
+import datetime
 from django.conf import settings as django_settings
 from django.contrib.auth.models import User
 from django.db import models
 from django.db.models import Sum
-from random import randrange
-from typing import Dict, Any
-from uuid import uuid4
+from django.utils import timezone
+
 from huey import crontab
 from huey.contrib import djhuey as huey
 
@@ -259,6 +262,31 @@ class Offer(models.Model):
     income = models.PositiveIntegerField(default=0)
     trailer = models.CharField(max_length=16, choices=TRAILERS, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
+
+    def accept_offer(self, driver):
+        if driver:
+            Disposition.objects.create(
+                loading_city=self.loading_city,
+                loading_spedition=self.loading_spedition,
+                unloading_city = self.unloading_city,
+                unloading_spedition = self.unloading_spedition,
+                cargo = self.cargo,
+                tonnage = self.tonnage,
+                deadline = timezone.now() + datetime.timedelta(days=14),
+                driver = driver,
+            )
+            self.delete()
+            return {"message": "Oferta została zaakceptowana poprawnie."}
+        else:
+            return {"error": "Kierowca nie został podany."}
+
+    @staticmethod
+    def get_offer_by_id(offer_id: int):
+        try:
+            offer = Offer.objects.get(id=offer_id)
+            return offer
+        except Offer.DoesNotExist:
+            return None
 
     @staticmethod
     def get_offers():

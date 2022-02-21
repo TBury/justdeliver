@@ -136,7 +136,9 @@ body {
 }
 
 .offer__button {
-    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
     color: white;
     background-color: #0071dc;
     border: 0;
@@ -145,7 +147,8 @@ body {
     margin-left: 48px;
     margin-top: 16px;
     padding: 10px;
-    height: 40px;
+    height: 25px;
+    text-decoration: none;
     font-weight: 700;
     font-size: 14px;
     text-align: center;

@@ -195,3 +195,16 @@ def show_offers(request):
         "offers": offers
     }
     return render(request, "offers_market.html", context)
+
+
+def accept_offer(request, offer_id):
+    offer = Offer.get_offer_by_id(offer_id)
+    if offer:
+        driver = Driver.get_driver_by_user_profile(request.user)
+        result = offer.accept_offer(driver)
+        if result.get("message"):
+            return redirect("/dispositions")
+        else:
+            return HttpResponse(status=403, content=result.get("error"))
+    else:
+        return HttpResponse(status=403, content="Oferta nie istnieje.")
