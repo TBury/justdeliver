@@ -14,39 +14,10 @@
     <title>Panel główny | JustDeliver</title>
 </head>
 <body>
-    <nav class="side-panel">
-        <img class="side-panel__logo" src="{% static 'assets/logo.png' %}" alt="Logo z dwoma ikonami skrzydeł nałożonymi na siebie, obok niebieski napis Hercules.">
-        <p class="side_panel__label">Kierowca</p>
-        <div class="side-panel__options">
-            <a class="side-panel__option option--active">
-                <img class="option__icon" src="{% static 'icons/home-active.png' %}" alt="Biała ikona domku, obok napis Panel główny.">
-                <p class="option__title">Panel główny</p>
-            </a>
-            <a class="side-panel__option" href="/Deliveries/select-delivery-method">
-                <img class="option__icon" src="{% static 'icons/add-delivery.png' %}" alt="Szara ikona ciężarówki, obok napis Dodaj nową trasę.">
-                <p class="option__title">Dodaj nową trasę</p>
-            </a>
-            <a class="side-panel__option">
-                <img class="option__icon" src="{% static 'icons/drivers-card.png' %}" alt="Szara ikona dowodu osobistego, obok napis Karta kierowcy.">
-                <p class="option__title">Karta kierowcy</p>
-            </a>
-            <a class="side-panel__option">
-                <img class="option__icon" src="{% static 'icons/dispositions.png' %}" alt="Szara ikona kalendarza, obok napis Dyspozycje.">
-                <p class="option__title">Dyspozycje</p>
-            </a>
-            <a class="side-panel__option">
-                <img class="option__icon" src="{% static 'icons/vehicles.png' %}" alt="Szara ikona ciężarówki, obok napis Pojazdy.">
-                <p class="option__title">Pojazdy</p>
-            </a>
-            <a class="side-panel__option">
-                <img class="option__icon" src="{% static 'icons/market.png' %}" alt="Szara ikona paczki, obok napis Giełda zleceń.">
-                <p class="option__title">Giełda zleceń</p>
-            </a>
-        </div>
-    </nav>
+    {% include "side_panel.html" %}
     <main class="dashboard">
         <h1 class="dashboard__welcome-title">
-            Cześć, {{ nick }}!
+            Cześć, {{ info.nick }}!
         </h1>
         <div class="dashboard__container">
             <div class="dashboard__statistics-wrapper">
@@ -54,34 +25,34 @@
                     <img class="statistics-card__icon" src="{% static 'icons/distance.png' %}" alt="Niebieska ikona dwóch pinezek do map.">
                     <div class="statistics-card__content">
                         <p class="statistics-card__content__label">Przejechany dystans</p>
-                        <p class="statistics-card__content__value">{{ statistics.distance.distance__sum|default_if_none:"0" }} km</p>
+                        <p class="statistics-card__content__value">{{ info.statistics.distance.distance__sum|default_if_none:"0" }} km</p>
                     </div>
                 </div>
                 <div class="dashboard__card card--statistics-card">
                     <img class="statistics-card__icon" src="{% static 'icons/deliveries.png' %}" alt="Niebieska ikona pinezki umiejscowiona na mapie.">
                     <div class="statistics-card__content">
                         <p class="statistics-card__content__label">Ilość wykonanych dostaw</p>
-                        <p class="statistics-card__content__value">{{ statistics.deliveries_count|default_if_none:"0" }} dostawy</p>
+                        <p class="statistics-card__content__value">{{ info.statistics.deliveries_count|default_if_none:"0" }} dostawy</p>
                     </div>
                 </div>
                 <div class="dashboard__card card--statistics-card">
                     <img class="statistics-card__icon" src="{% static 'icons/income.png' %}" alt="Niebieska ikona banknotów.">
                     <div class="statistics-card__content">
                         <p class="statistics-card__content__label">Łączny dochód</p>
-                        <p class="statistics-card__content__value">{{ statistics.income.income__sum|default_if_none:"0" }} zł</p>
+                        <p class="statistics-card__content__value">{{ info.statistics.income.income__sum|default_if_none:"0" }} zł</p>
                     </div>
                 </div>
             </div>
 
             <div class="dashboard__card card--current-disposition">
-                {% if disposition %}
+                {% if info.disposition %}
                 <div class="current-disposition__info__wrapper">
                     <div class="current-disposition__info">
                         <p class="current-disposition__disposition-number">
-                            Dyspozycja #{{ disposition.id }}
+                            Dyspozycja #{{ info.disposition.id }}
                         </p>
                         <p class="current-disposition__disposition-deadline">
-                            Przydzielono: {{ disposition.created_at | date:"j E, H:i" }}
+                            Przydzielono: {{ info.disposition.created_at | date:"j E, H:i" }}
                         </p>
                     </div>
                     <div class="current-disposition__status status--not-finished">
@@ -93,22 +64,22 @@
                     <div class="cities__loading-city-wrapper">
                         <img class="cities__icon" src="{% static 'icons/loading-city.png' %}" alt="Niebieska ikona pinezki.">
                         <div class="loading-info">
-                            <p class="loading-city">{{ disposition.loading_city }}</p>
-                            <p class="loading-company">{{ disposition.loading_spedition }}</p>
+                            <p class="loading-city">{{ info.disposition.loading_city }}</p>
+                            <p class="loading-company">{{ info.disposition.loading_spedition }}</p>
                         </div>
                     </div>
                     <div class="cities__unloading-city-wrapper">
                         <img class="cities__icon" src="{% static 'icons/unloading-city.png' %}" alt="Niebieska ikona flagi finisz.">
                         <div class="unloading-info">
-                            <p class="unloading-city">{{ disposition.unloading_city }}</p>
-                            <p class="unloading-company">{{ disposition.unloading_spedition }}</p>
+                            <p class="unloading-city">{{ info.disposition.unloading_city }}</p>
+                            <p class="unloading-company">{{ info.disposition.unloading_spedition }}</p>
                         </div>
                     </div>
                 </div>
 
                 <div class="current-disposition__cargo">
                     <img class="cargo__icon" src="{% static 'icons/cargo.png' %}" alt="Niebieska ikona paczki.">
-                    <p class="cargo">{{ disposition.cargo }} ({{ disposition.tonnage }} t)</p>
+                    <p class="cargo">{{ info.disposition.cargo }} ({{ info.disposition.tonnage }} t)</p>
                 </div>
                 {% else %}
                 <div class="current-disposition__info__wrapper">
@@ -127,24 +98,24 @@
             </div>
             {% if vehicle %}
             <div class="dashboard__card card--vehicle">
-                <img class="vehicle__photo" src="{{ vehicle.photo.url }}" alt="Zdjęcie pojazdu">
+                <img class="vehicle__photo" src="{{ info.vehicle.photo.url }}" alt="Zdjęcie pojazdu">
                 <p class="vehicle__label">
                     Twój pojazd
                 </p>
-                <p class="vehicle__title">{{ vehicle.manufacturer }} {{ vehicle.model }} {{ vehicle.cabin }}</p>
-                <span class="vehicle__license-plate">{{ vehicle.license_plate }}</span>
+                <p class="vehicle__title">{{ info.vehicle.manufacturer }} {{ info.vehicle.model }} {{ info.vehicle.cabin }}</p>
+                <span class="vehicle__license-plate">{{ info.vehicle.license_plate }}</span>
                 <div class="vehicle__details">
                     <div class="details--engine">
                         <p class="vehicle__label">Silnik</p>
-                        <p class="engine">{{ vehicle.engine }} KM</p>
+                        <p class="engine">{{ info.vehicle.engine }} KM</p>
                     </div>
                     <div class="details--chassis">
                         <p class="vehicle__label">Nadwozie</p>
-                        <p class="chassis">{{ vehicle.chassis }}</p>
+                        <p class="chassis">{{ info.vehicle.chassis }}</p>
                     </div>
                     <div class="details--odometer">
                         <p class="vehicle__label">Przebieg</p>
-                        <p class="odometer">{{ vehicle.odometer }} km</p>
+                        <p class="odometer">{{ info.vehicle.odometer }} km</p>
                     </div>
                 </div>
             </div>
@@ -158,7 +129,7 @@
                 <p class="deliveries__label">
                     Ostatnie zlecenia
                 </p>
-                {% for qs in last_deliveries %}
+                {% for qs in info.last_deliveries %}
                     {% for delivery in qs|slice:"0:5" %}
                     <div class="delivery">
                     <div class="delivery__container">

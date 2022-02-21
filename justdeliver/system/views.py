@@ -8,11 +8,18 @@ from .forms import NewDeliveryForm, NewVehicleForm, EditVehicleForm
 def dashboard(request):
     driver = Driver.get_driver_by_user_profile(request.user)
     info = driver.get_driver_info()
-    return render(request, "dashboard.html", info)
+    context = {
+        "dashboard": "option--active",
+        "info": info,
+    }
+    return render(request, "dashboard.html", context)
 
 
 def select_delivery_adding_mode(request):
-    return render(request, "choose_delivery_method.html")
+    context = {
+        "add_new_delivery": "option--active",
+    }
+    return render(request, "choose_delivery_method.html", context)
 
 
 def upload_screenshots(request):
@@ -33,12 +40,14 @@ def upload_screenshots(request):
 def add_delivery_details(request):
     if request.session.get("delivery_key"):
         delivery_key = request.session.get("delivery_key")
+        driver = Driver.get_driver_by_user_profile(request.user)
         try:
             delivery = Delivery.objects.get(delivery_key=delivery_key)
             if request.method == "POST":
                 form = NewDeliveryForm(request.POST, instance=delivery)
                 if form.is_valid():
                     delivery.is_edited = False
+                    delivery.driver = driver
                     form.save()
                     del request.session["delivery_key"]
                 return redirect("/dashboard")
@@ -52,6 +61,7 @@ def add_delivery_details(request):
                 context = {
                     'form': NewDeliveryForm(instance=delivery),
                     'disposition': disposition,
+                    'add_new_delivery': 'option--active'
                 }
                 return render(request, "add_delivery_details.html", context)
         except Delivery.DoesNotExist:
@@ -64,7 +74,8 @@ def drivers_card(request):
     driver = Driver.get_driver_by_user_profile(request.user)
     info = driver.get_driver_info()
     context = {
-        "info": info
+        "info": info,
+        "drivers_card": "option--active",
     }
     return render(request, "drivers_card.html", context)
 
@@ -76,6 +87,7 @@ def show_dispositions(request):
     context = {
         'current_disposition': current_disposition,
         'dispositions': dispositions,
+        'dispositions_tag': "option--active",
     }
     return render(request, "dispositions.html", context)
 
@@ -124,6 +136,7 @@ def show_vehicles(request):
     context = {
         'current_vehicle': current_vehicle,
         'vehicles': vehicles,
+        'vehicles_tag': "option--active",
     }
     return render(request, "vehicles.html", context)
 
@@ -143,6 +156,7 @@ def add_new_vehicle(request):
     else:
         context = {
             'form': NewVehicleForm(),
+            'vehicles_tag': "option--active",
         }
         return render(request, "add_new_vehicle.html", context)
 
@@ -166,6 +180,7 @@ def edit_vehicle(request, vehicle_id):
             context = {
                 'form': EditVehicleForm(instance=vehicle),
                 'vehicle': vehicle,
+                'vehicles_tag': "option--active",
             }
             return render(request, "edit_vehicle.html", context)
     else:
@@ -192,7 +207,8 @@ def show_offers(request):
         offers = paginator.page(paginator.num_pages)
 
     context = {
-        "offers": offers
+        "offers": offers,
+        "offers_market": "option--active",
     }
     return render(request, "offers_market.html", context)
 
