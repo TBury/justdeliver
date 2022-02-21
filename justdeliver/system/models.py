@@ -260,13 +260,38 @@ class Offer(models.Model):
     trailer = models.CharField(max_length=16, choices=TRAILERS, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
-
     @staticmethod
     def get_offers():
         try:
-            offers = Offer.objects.all().order_by("-created_at")[:15]
+            offers = Offer.objects.all().order_by("-created_at")
             return offers
         except Offer.DoesNotExist:
+            return None
+
+    @staticmethod
+    def get_ordered_offers(order: str):
+        try:
+            if order == "recommended":
+                return Offer.get_offers()
+            elif order == "price-desc":
+                offers = Offer.objects.all().order_by("-income").order_by("-created_at")
+                return offers
+            elif order == "price-asc":
+                offers = Offer.objects.all().order_by("income").order_by("-created_at")
+                return offers
+            else:
+                return None
+        except Offer.DoesNotExist:
+            return None
+
+    @staticmethod
+    def get_filtered_offers(filter: str):
+        try:
+            if filter == "all":
+                return Offer.get_offers()
+            elif filter in Offer.TRAILERS:
+                return Offer.objects.filter(trailer=filter)
+        except ValueError:
             return None
 
     @staticmethod

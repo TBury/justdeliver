@@ -150,3 +150,42 @@ body {
     font-size: 14px;
     text-align: center;
 }
+
+.disabled {
+    opacity: 0.5;
+}
+
+
+
+.pagination {
+    display: inline-block;
+    margin-left: 30%;
+    margin-top: 32px;
+    margin-bottom: 16px;
+  }
+  
+.pagination a {
+    color: black;
+    float: left;
+    padding: 8px 16px;
+    text-decoration: none;
+    border: 1px solid #ddd;
+}
+  
+.pagination a:hover:not(.active) {background-color: #ddd;}
+  
+.pagination a:first-child {
+    border-top-left-radius: 5px;
+    border-bottom-left-radius: 5px;
+}
+  
+.pagination a:last-child {
+    border-top-right-radius: 5px;
+    border-bottom-right-radius: 5px;
+}
+
+.active-page {
+    background-color: #0071dc;
+    color: white !important;
+    font-weight: bold;
+}

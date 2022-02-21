@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from .models import Driver, Disposition, DeliveryScreenshot, Delivery, Vehicle, Offer
 from .forms import NewDeliveryForm, NewVehicleForm, EditVehicleForm
 
@@ -180,7 +181,16 @@ def select_vehicle(request, vehicle_id):
 
 
 def show_offers(request):
-    offers = Offer.get_offers()
+    offers_list = Offer.get_offers()
+    paginator = Paginator(offers_list, 10)  # 2 posts in each page
+    page = request.GET.get('page')
+    try:
+        offers = paginator.page(page)
+    except PageNotAnInteger:
+        offers = paginator.page(1)
+    except EmptyPage:
+        offers = paginator.page(paginator.num_pages)
+
     context = {
         "offers": offers
     }
