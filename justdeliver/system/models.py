@@ -260,6 +260,15 @@ class Offer(models.Model):
     trailer = models.CharField(max_length=16, choices=TRAILERS, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
+
+    @staticmethod
+    def get_offers():
+        try:
+            offers = Offer.objects.all().order_by("-created_at")[:15]
+            return offers
+        except Offer.DoesNotExist:
+            return None
+
     @staticmethod
     def generate_offer(promods: bool):
         cities_file = open(os.path.join(django_settings.STATIC_ROOT, 'files/cities.json'), "r", encoding="UTF-8")

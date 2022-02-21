@@ -16,4 +16,5 @@ urlpatterns = [
     path('vehicles/add-new-vehicle', views.add_new_vehicle),
     path('Vehicles/EditVehicle/<int:vehicle_id>', views.edit_vehicle),
     path('Vehicles/SelectVehicle/<int:vehicle_id>', views.select_vehicle),
+    path('offers-market', views.show_offers),
 ]

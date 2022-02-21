@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
-from .models import Driver, Disposition, DeliveryScreenshot, Delivery, Vehicle
+from .models import Driver, Disposition, DeliveryScreenshot, Delivery, Vehicle, Offer
 from .forms import NewDeliveryForm, NewVehicleForm, EditVehicleForm
 
 
@@ -177,3 +177,11 @@ def select_vehicle(request, vehicle_id):
     if messages.get("error"):
         return HttpResponse(status=403, content="Pojazd nie istnieje.")
     return redirect("/vehicles")
+
+
+def show_offers(request):
+    offers = Offer.get_offers()
+    context = {
+        "offers": offers
+    }
+    return render(request, "offers_market.html", context)
