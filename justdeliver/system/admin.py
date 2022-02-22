@@ -8,7 +8,8 @@ from .models import (
     Vehicle,
     Company,
     Offer,
-    DeliveryScreenshot
+    DeliveryScreenshot,
+    EmployeeApplication
 )
 
 admin.site.register(Driver)
@@ -19,3 +20,4 @@ admin.site.register(Vehicle)
 admin.site.register(Company)
 admin.site.register(Offer)
 admin.site.register(DeliveryScreenshot)
+admin.site.register(EmployeeApplication)

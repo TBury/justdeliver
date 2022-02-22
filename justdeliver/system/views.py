@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from .models import Driver, Disposition, DeliveryScreenshot, Delivery, Vehicle, Offer, Company, Employee
-from .forms import NewDeliveryForm, NewVehicleForm, EditVehicleForm, CreateCompanyForm
+from .forms import NewDeliveryForm, NewVehicleForm, EditVehicleForm, CreateCompanyForm, NewApplicationForm
 
 
 def dashboard(request):
@@ -271,3 +271,24 @@ def show_company_details(request, company_id):
         "find_company": "option--active",
     }
     return render(request, "company_details.html", context)
+
+
+def employee_application(request, company_id):
+    driver = Driver.get_driver_by_user_profile(request.user)
+    if request.method == "POST":
+        form = NewApplicationForm(request.POST)
+        if form.is_valid():
+            application = form.save(commit=False)
+            application.driver = driver
+            company = Company.get_company_by_id(company_id)
+            application.company = company
+            application.save()
+            return redirect("/dashboard")
+        else:
+            return HttpResponse(content=form.errors)
+    else:
+        context = {
+            'form': NewApplicationForm(),
+            "find_company": "option--active",
+        }
+        return render(request, "new_application_form.html", context)

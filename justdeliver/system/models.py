@@ -649,3 +649,11 @@ class VehicleBorrow(models.Model):
     vehicle = models.ForeignKey(Vehicle, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
     deadline = models.DateTimeField()
+
+
+class EmployeeApplication(models.Model):
+    driver = models.ForeignKey(Driver, on_delete=models.CASCADE)
+    company = models.ForeignKey(Company, on_delete=models.CASCADE)
+    dlc = models.CharField(max_length=512, default="", blank=True)
+    social_media_url = models.URLField(default="")
+    reason = models.TextField()
