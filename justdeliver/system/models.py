@@ -41,22 +41,22 @@ class Driver(models.Model):
 
     @property
     def distance(self):
-        distance = Delivery.objects.filter(driver=self, is_edited=False).aggregate(Sum('distance'))
+        distance = Delivery.objects.filter(driver=self, is_edited=False, status="Zaakceptowana").aggregate(Sum('distance'))
         return distance
 
     @property
     def tonnage(self):
-        tonnage = Delivery.objects.filter(driver=self, is_edited=False).aggregate(Sum('tonnage'))
+        tonnage = Delivery.objects.filter(driver=self, is_edited=False, status="Zaakceptowana").aggregate(Sum('tonnage'))
         return tonnage
 
     @property
     def deliveries_count(self):
-        deliveries_count = Delivery.objects.filter(driver=self, is_edited=False).count()
+        deliveries_count = Delivery.objects.filter(driver=self, is_edited=False, status="Zaakceptowana").count()
         return deliveries_count
 
     @property
     def total_income(self):
-        total_income = Delivery.objects.filter(driver=self, is_edited=False).aggregate(Sum('income'))
+        total_income = Delivery.objects.filter(driver=self, is_edited=False, status="Zaakceptowana").aggregate(Sum('income'))
         return total_income
 
     def get_statistics(self):
