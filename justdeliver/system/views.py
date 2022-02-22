@@ -197,7 +197,7 @@ def select_vehicle(request, vehicle_id):
 
 def show_offers(request):
     offers_list = Offer.get_offers()
-    paginator = Paginator(offers_list, 10)  # 2 posts in each page
+    paginator = Paginator(offers_list, 10)
     page = request.GET.get('page')
     try:
         offers = paginator.page(page)
@@ -242,3 +242,22 @@ def create_company(request):
             "create_company": "option--active",
         }
         return render(request, "create_company.html", context)
+
+
+def find_company(request):
+    companies_list = Company.get_all_companies()
+    paginator = Paginator(companies_list, 10)
+    page = request.GET.get('page')
+    try:
+        companies = paginator.page(page)
+    except PageNotAnInteger:
+        companies = paginator.page(1)
+    except EmptyPage:
+        companies = paginator.page(paginator.num_pages)
+
+    context = {
+        "companies": companies,
+        "find_company": "option--active",
+    }
+
+    return render(request, "find_company.html", context)

@@ -106,6 +106,13 @@ class Company(models.Model):
         return Vehicle.objects.filter(company_owner=self)
 
     @staticmethod
+    def get_all_companies():
+        try:
+            return Company.objects.all()
+        except ValueError:
+            return {"error": "Brak firm, które można byłoby wyświetlić."}
+
+    @staticmethod
     def create_employee(driver: Driver, company, job_title):
         Employee.objects.create(
             driver=driver,
