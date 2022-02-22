@@ -179,7 +179,11 @@ class Company(models.Model):
     @staticmethod
     def get_all_companies():
         try:
-            return Company.objects.all()
+            companies_list = []
+            companies = Company.objects.all()
+            for company in companies:
+                companies_list.append(company.get_company_info())
+            return companies_list
         except ValueError:
             return {"error": "Brak firm, które można byłoby wyświetlić."}
 
