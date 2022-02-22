@@ -20,4 +20,5 @@ urlpatterns = [
     path('OffersMarket/AcceptOffer/<int:offer_id>', views.accept_offer),
     path('create-new-company', views.create_company),
     path('find-company', views.find_company),
+    path('Company/<int:company_id>', views.show_company_details),
 ]

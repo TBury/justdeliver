@@ -98,6 +98,45 @@ class Company(models.Model):
     has_week_limit = models.BooleanField(default=False)
 
     @property
+    def drivers_list(self):
+        return Employee.objects.filter(company=self)
+
+    @property
+    def company_distance(self):
+        employees = self.drivers_list
+        distance = 0
+        for employee in employees:
+            distance += Delivery.objects.filter(driver=employee.driver, is_edited=False, status="Zaakceptowana").aggregate(
+                Sum('distance')).get("distance__sum")
+        return distance
+
+    @property
+    def company_tonnage(self):
+        employees = self.drivers_list
+        tonnage = 0
+        for employee in employees:
+            tonnage += Delivery.objects.filter(driver=employee.driver, is_edited=False, status="Zaakceptowana").aggregate(
+                Sum('tonnage')).get("tonnage__sum")
+        return tonnage
+
+    @property
+    def company_deliveries_count(self):
+        employees = self.drivers_list
+        deliveries_count = 0
+        for employee in employees:
+            deliveries_count += Delivery.objects.filter(driver=employee.driver, is_edited=False, status="Zaakceptowana").count()
+        return deliveries_count
+
+    @property
+    def company_total_income(self):
+        employees = self.drivers_list
+        total_income = 0
+        for employee in employees:
+            total_income += Delivery.objects.filter(driver=employee.driver, is_edited=False, status="Zaakceptowana").aggregate(
+                Sum('income')).get("income__sum")
+        return total_income
+
+    @property
     def drivers_count(self):
         return Employee.objects.filter(company=self).count()
 
@@ -105,21 +144,43 @@ class Company(models.Model):
     def company_vehicles(self):
         return Vehicle.objects.filter(company_owner=self)
 
+    def get_company_statistics(self):
+        statistics = {
+            "distance": self.company_distance,
+            "tonnage": self.company_tonnage,
+            "deliveries_count": self.company_deliveries_count,
+            "total_income": self.company_total_income,
+            "drivers_count": self.drivers_count,
+        }
+        return statistics
+
+    def get_company_info(self):
+        info = {
+            "name": self.name,
+            "social_media_url": self.social_media_url,
+            "is_recruiting": self.is_recruiting,
+            "description": self.description,
+            "is_realistic": self.is_realistic,
+            "has_week_limit": self.has_week_limit,
+            "statistics": self.get_company_statistics(),
+            "drivers": self.drivers_list,
+        }
+        return info
+
+    @staticmethod
+    def get_company_by_id(company_id):
+        try:
+            company = Company.objects.get(id=company_id)
+            return company
+        except Company.DoesNotExist:
+            return {"error": "Firma nie istnieje."}
+
     @staticmethod
     def get_all_companies():
         try:
             return Company.objects.all()
         except ValueError:
             return {"error": "Brak firm, które można byłoby wyświetlić."}
-
-    @staticmethod
-    def create_employee(driver: Driver, company, job_title):
-        Employee.objects.create(
-            driver=driver,
-            company=company,
-            job_title = job_title,
-        )
-        return {"message": f"Pracownik {driver.nick} dodany poprawnie."}
 
 
 class Employee(models.Model):
@@ -133,6 +194,15 @@ class Employee(models.Model):
     driver = models.OneToOneField(Driver, on_delete=models.CASCADE)
     company = models.ForeignKey(Company, on_delete=models.CASCADE)
     job_title = models.CharField(max_length=64, choices=JOB_TITLES, default="Kierowca")
+
+    @staticmethod
+    def create_employee(driver: Driver, company, job_title):
+        Employee.objects.create(
+            driver=driver,
+            company=company,
+            job_title = job_title,
+        )
+        return {"message": f"Pracownik {driver.nick} dodany poprawnie."}
 
 
 class Vehicle(models.Model):
