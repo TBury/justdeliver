@@ -90,9 +90,11 @@ class Driver(models.Model):
 
 class Company(models.Model):
     name = models.CharField(max_length=128)
-    logo = models.ImageField(upload_to='logos')
+    logo = models.ImageField(upload_to='logos', blank=True)
     is_recruiting = models.BooleanField(default=False)
     description = models.TextField(blank=True)
+    is_realistic = models.BooleanField(default=False)
+    has_week_limit = models.BooleanField(default=False)
 
     @property
     def drivers_count(self):
@@ -100,7 +102,23 @@ class Company(models.Model):
 
     @property
     def company_vehicles(self):
-        return
+        return Vehicle.objects.filter(company_owner=self)
+
+    @staticmethod
+    def create_company(driver: Driver, data: Dict):
+        company = Company.objects.create(
+            name = data.get("name"),
+            is_recruiting = data.get("is_recruiting"),
+            description = data.get("description"),
+            is_realistic = data.get("is_realistic"),
+            has_week_limit = data.get("has_week_limit")
+        )
+        Employee.objects.create(
+            driver=driver,
+            company=company,
+            job_title = "Właściciel",
+        )
+        return {"message": f"Firma {data.get('name')} utworzona poprawnie."}
 
 
 class Employee(models.Model):

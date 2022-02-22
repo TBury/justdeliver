@@ -224,3 +224,10 @@ def accept_offer(request, offer_id):
             return HttpResponse(status=403, content=result.get("error"))
     else:
         return HttpResponse(status=403, content="Oferta nie istnieje.")
+
+
+def create_company(request):
+    context = {
+        "create_company": "option--active",
+    }
+    return render(request, "create_company.html", context)
