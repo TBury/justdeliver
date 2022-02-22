@@ -156,6 +156,7 @@ class Company(models.Model):
 
     def get_company_info(self):
         info = {
+            "company_id": self.id,
             "name": self.name,
             "social_media_url": self.social_media_url,
             "is_recruiting": self.is_recruiting,
