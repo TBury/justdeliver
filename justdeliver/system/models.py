@@ -91,6 +91,7 @@ class Driver(models.Model):
 class Company(models.Model):
     name = models.CharField(max_length=128)
     logo = models.ImageField(upload_to='logos', blank=True)
+    social_media_url = models.URLField(default="")
     is_recruiting = models.BooleanField(default=False)
     description = models.TextField(blank=True)
     is_realistic = models.BooleanField(default=False)
@@ -105,20 +106,13 @@ class Company(models.Model):
         return Vehicle.objects.filter(company_owner=self)
 
     @staticmethod
-    def create_company(driver: Driver, data: Dict):
-        company = Company.objects.create(
-            name = data.get("name"),
-            is_recruiting = data.get("is_recruiting"),
-            description = data.get("description"),
-            is_realistic = data.get("is_realistic"),
-            has_week_limit = data.get("has_week_limit")
-        )
+    def create_employee(driver: Driver, company, job_title):
         Employee.objects.create(
             driver=driver,
             company=company,
-            job_title = "Właściciel",
+            job_title = job_title,
         )
-        return {"message": f"Firma {data.get('name')} utworzona poprawnie."}
+        return {"message": f"Pracownik {driver.nick} dodany poprawnie."}
 
 
 class Employee(models.Model):

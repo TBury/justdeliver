@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from .models import Driver, Disposition, DeliveryScreenshot, Delivery, Vehicle, Offer
-from .forms import NewDeliveryForm, NewVehicleForm, EditVehicleForm
+from .forms import NewDeliveryForm, NewVehicleForm, EditVehicleForm, CreateCompanyForm
 
 
 def dashboard(request):
@@ -227,7 +227,18 @@ def accept_offer(request, offer_id):
 
 
 def create_company(request):
-    context = {
-        "create_company": "option--active",
-    }
-    return render(request, "create_company.html", context)
+    if request.method == "POST":
+        form = CreateCompanyForm(request.POST)
+        if form.is_valid():
+            company = form.save()
+            driver = Driver.get_driver_by_user_profile(request.user)
+            Company.create_employee(driver, company, "Właściciel")
+            return redirect("/vehicles")
+        else:
+            return HttpResponse(content=form.errors)
+    else:
+        context = {
+            'form': CreateCompanyForm(),
+            "create_company": "option--active",
+        }
+        return render(request, "create_company.html", context)
