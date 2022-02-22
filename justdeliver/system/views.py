@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-from .models import Driver, Disposition, DeliveryScreenshot, Delivery, Vehicle, Offer
+from .models import Driver, Disposition, DeliveryScreenshot, Delivery, Vehicle, Offer, Company
 from .forms import NewDeliveryForm, NewVehicleForm, EditVehicleForm, CreateCompanyForm
 
 
@@ -233,7 +233,7 @@ def create_company(request):
             company = form.save()
             driver = Driver.get_driver_by_user_profile(request.user)
             Company.create_employee(driver, company, "Właściciel")
-            return redirect("/vehicles")
+            return redirect("/dashboard")
         else:
             return HttpResponse(content=form.errors)
     else:
