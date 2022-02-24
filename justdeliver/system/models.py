@@ -76,6 +76,7 @@ class Driver(models.Model):
             'disposition': Disposition.get_disposition_for_driver(self),
             'vehicle': Vehicle.get_vehicle_for_driver(self),
             'last_deliveries': Delivery.get_last_deliveries_for_driver(self),
+            'is_employed': self.is_employed,
         }
         return info
 
