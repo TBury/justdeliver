@@ -22,5 +22,7 @@ urlpatterns = [
     path('find-company', views.find_company),
     path('Company/<int:company_id>', views.show_company_details),
     path('Company/SendApplication/<int:company_id>', views.employee_application),
-    path('Deliveries/', views.delivery_office)
+    path('Deliveries/', views.delivery_office),
+    path('Delivery/<int:delivery_id>', views.show_delivery_details),
+    path('Deliveries/ChangeDeliveryStatus', views.edit_delivery_status),
 ]

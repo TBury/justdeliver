@@ -328,4 +328,9 @@ body {
   background-color: #B8DCFF;
   color: #0071DC;
 }
+
+.status--to-edit {
+  background-color: #FFDFB8;
+  color: #FF8B00;
+}
 /*# sourceMappingURL=drivers_card.css.map */

@@ -1,3 +1,4 @@
+import json
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
@@ -125,7 +126,7 @@ def delete_disposition(request, disposition_id):
         except Disposition.DoesNotExist:
             return HttpResponse(status=403, content="Dyspozycja nie istnieje.")
     else:
-        return HttpResponse(status=401, content="Nie masz uprawnień do usuwania dyspozycji.")
+        return HttpResponse(status=403, content="Nie masz uprawnień do usuwania dyspozycji.")
 
 
 def cancel_disposition(request, disposition_id):
@@ -171,7 +172,7 @@ def add_new_vehicle(request):
             }
             return render(request, "add_new_vehicle.html", context)
     else:
-        return HttpResponse(status=401, content="Nie masz uprawnień do dodawania nowego pojazdu.")
+        return HttpResponse(status=403, content="Nie masz uprawnień do dodawania nowego pojazdu.")
 
 
 def edit_vehicle(request, vehicle_id):
@@ -201,7 +202,7 @@ def edit_vehicle(request, vehicle_id):
         else:
             return HttpResponse(status=403, content="Pojazd nie istnieje.")
     else:
-        return HttpResponse(status=401, content="Nie masz uprawnień do edycji pojazdu.")
+        return HttpResponse(status=403, content="Nie masz uprawnień do edycji pojazdu.")
 
 
 def select_vehicle(request, vehicle_id):
@@ -212,7 +213,7 @@ def select_vehicle(request, vehicle_id):
             return HttpResponse(status=403, content="Pojazd nie istnieje.")
         return redirect("/vehicles")
     else:
-        return HttpResponse(status=401, content="Nie masz uprawnień do wybierania innego pojazdu.")
+        return HttpResponse(status=403, content="Nie masz uprawnień do wybierania innego pojazdu.")
 
 
 def show_offers(request):
@@ -248,7 +249,7 @@ def accept_offer(request, offer_id):
         else:
             return HttpResponse(status=403, content="Oferta nie istnieje.")
     else:
-        return HttpResponse(status=401, content="Nie masz uprawnień do akceptowania oferty.")
+        return HttpResponse(status=403, content="Nie masz uprawnień do akceptowania oferty.")
 
 
 def create_company(request):
@@ -335,24 +336,87 @@ def delivery_office(request):
     if driver.is_employed:
         if driver.company and (driver.job_title == "Właściciel" or driver.job_title == "Spedytor"):
             company = driver.company
-            deliveries_list = Delivery.get_all_company_deliveries(company)
-            paginator = Paginator(deliveries_list, 10)
-            page = request.GET.get('page')
+            deliveries_list = Delivery.get_all_company_deliveries(driver, company)
+            if deliveries_list:
+                paginator = Paginator(deliveries_list, 10)
+                page = request.GET.get('page')
 
-            try:
-                deliveries = paginator.page(page)
-            except PageNotAnInteger:
-                deliveries = paginator.page(1)
-            except EmptyPage:
-                deliveries = paginator.page(paginator.num_pages)
+                try:
+                    deliveries = paginator.page(page)
+                except PageNotAnInteger:
+                    deliveries = paginator.page(1)
+                except EmptyPage:
+                    deliveries = paginator.page(paginator.num_pages)
 
-            context = {
-                "deliveries": deliveries,
-                "delivery-office": "option--active",
-            }
+                context = {
+                    "deliveries": deliveries,
+                    "delivery-office": "option--active",
+                }
 
-            return render(request, "delivery_office.html", context)
+                return render(request, "delivery_office.html", context)
+            else:
+                return HttpResponse(status=403, content="Nie jesteś uprawniony do wykonania tej operacji.")
         else:
-            return HttpResponse(status=401, content="Nie jesteś uprawniony do wykonania tej operacji.")
+            return HttpResponse(status=403, content="Nie jesteś uprawniony do wykonania tej operacji.")
     else:
-        return HttpResponse(status=401, content="Nie jesteś uprawniony do wykonania tej operacji.")
+        return HttpResponse(status=403, content="Nie jesteś uprawniony do wykonania tej operacji.")
+
+
+def show_delivery_details(request, delivery_id):
+    driver = Driver.get_driver_by_user_profile(request.user)
+    if driver.is_employed:
+        if driver.company and (driver.job_title == "Właściciel" or driver.job_title == "Spedytor"):
+            try:
+                delivery = Delivery.get_delivery_by_id(delivery_id)
+                if delivery.driver.company == driver.company:
+                    screenshots = delivery.get_delivery_screenshots()
+                    disposition = Disposition.get_disposition_from_waybill(
+                        driver=driver,
+                        loading_city=delivery.loading_city,
+                        unloading_city=delivery.unloading_city,
+                        cargo=delivery.cargo,
+                    )
+                    context = {
+                        'delivery': delivery,
+                        'screenshots': screenshots,
+                        'disposition': disposition,
+                        'delivery-office': 'option--active',
+                    }
+                    return render(request, "delivery_details.html", context)
+                else:
+                    return HttpResponse(status=403, content="Nie jesteś uprawniony do wykonania tej operacji.")
+            except Delivery.DoesNotExist:
+                return HttpResponse(status=404, content="Dostawa o podanym id nie została znaleziona.")
+        else:
+            return HttpResponse(status=403, content="Nie jesteś uprawniony do wykonania tej operacji.")
+    else:
+        return HttpResponse(status=403, content="Nie jesteś uprawniony do wykonania tej operacji.")
+
+
+def edit_delivery_status(request):
+    if request.method == "POST":
+        body = json.loads(request.body.decode("utf-8"))
+        driver = Driver.get_driver_by_user_profile(request.user)
+        if driver.is_employed:
+            if driver.company and (driver.job_title == "Właściciel" or driver.job_title == "Spedytor"):
+                try:
+                    delivery_id = body.get("delivery_id")
+                    delivery = Delivery.get_delivery_by_id(delivery_id)
+                    if delivery.driver.company == driver.company:
+                        status = body.get("status")
+                        message = delivery.update_status(status)
+                        if not message.get("error"):
+                            return HttpResponse(status=200, content=message.get("message"))
+                        else:
+                            return HttpResponse(status=400, content="Błędny status dostawy.")
+                    else:
+                        return HttpResponse(status=403, content="Nie jesteś uprawniony do wykonania tej operacji.")
+                except ValueError:
+                    return HttpResponse(status=400, content="Błędne id dostawy.")
+            else:
+                return HttpResponse(status=403, content="Nie jesteś uprawniony do wykonania tej operacji.")
+        else:
+            return HttpResponse(status=403, content="Nie jesteś uprawniony do wykonania tej operacji.")
+    else:
+        return HttpResponse(status=405, content="Metoda niedozwolona. Wykonaj operację, korzystając z przycisku w"
+                                                " szczegółach zlecenia.")

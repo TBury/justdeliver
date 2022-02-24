@@ -299,6 +299,26 @@ class Delivery(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     accepted_at = models.DateTimeField(null=True, blank=True)
 
+    def get_delivery_screenshots(self):
+        try:
+            screenshots = DeliveryScreenshot.get_screenshots(self)
+            return screenshots
+        except DeliveryScreenshot.DoesNotExist:
+            return None
+
+    def update_status(self, status):
+        if status in dict(Delivery.DELIVERY_STATUS).keys():
+            self.status = status
+            self.save()
+            return {"message": "Status zaktualizowany poprawnie."}
+        else:
+            return {"error": "Niepoprawny status dostawy."}
+
+    @staticmethod
+    def get_delivery_by_id(delivery_id: int):
+        delivery = Delivery.objects.get(id=delivery_id)
+        return delivery
+
     @staticmethod
     def get_last_deliveries_for_driver(driver: Driver):
         deliveries = []
@@ -317,14 +337,17 @@ class Delivery(models.Model):
         return deliveries
 
     @staticmethod
-    def get_all_company_deliveries(company: Company):
-        try:
-            employees = company.drivers_list
-            deliveries = []
-            for employee in employees:
-                deliveries += Delivery.objects.filter(driver=employee.driver, is_edited=False)
-            return deliveries
-        except Delivery.DoesNotExist:
+    def get_all_company_deliveries(driver: Driver, company: Company):
+        if driver.company == company:
+            try:
+                employees = company.drivers_list
+                deliveries = []
+                for employee in employees:
+                    deliveries += Delivery.objects.filter(driver=employee.driver, is_edited=False)
+                return deliveries
+            except Delivery.DoesNotExist:
+                return None
+        else:
             return None
 
 
