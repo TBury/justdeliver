@@ -30,6 +30,12 @@ class Driver(models.Model):
     @property
     def company(self):
         if self.is_employed:
+            return Employee.objects.get(driver=self).company
+        return None
+
+    @property
+    def company_name(self):
+        if self.is_employed:
             return Employee.objects.get(driver=self).company.name
         return None
 
@@ -192,7 +198,6 @@ class Company(models.Model):
 class Employee(models.Model):
     JOB_TITLES = (
         ('Właściciel', 'owner'),
-        ('Szef', 'boss'),
         ('Spedytor', 'speditor'),
         ('Kierowca', 'driver')
     )
@@ -310,6 +315,17 @@ class Delivery(models.Model):
         if accepted:
             deliveries.append(accepted)
         return deliveries
+
+    @staticmethod
+    def get_all_company_deliveries(company: Company):
+        try:
+            employees = company.drivers_list
+            deliveries = []
+            for employee in employees:
+                deliveries += Delivery.objects.filter(driver=employee.driver, is_edited=False)
+            return deliveries
+        except Delivery.DoesNotExist:
+            return None
 
 
 class DeliveryScreenshot(models.Model):

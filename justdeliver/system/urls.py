@@ -22,4 +22,5 @@ urlpatterns = [
     path('find-company', views.find_company),
     path('Company/<int:company_id>', views.show_company_details),
     path('Company/SendApplication/<int:company_id>', views.employee_application),
+    path('Deliveries/', views.delivery_office)
 ]

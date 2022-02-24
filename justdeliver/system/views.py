@@ -328,3 +328,31 @@ def employee_application(request, company_id):
             return render(request, "new_application_form.html", context)
     else:
         return HttpResponse(status=403, content="Nie jesteś uprawniony do wysyłania podania o pracę.")
+
+
+def delivery_office(request):
+    driver = Driver.get_driver_by_user_profile(request.user)
+    if driver.is_employed:
+        if driver.company and (driver.job_title == "Właściciel" or driver.job_title == "Spedytor"):
+            company = driver.company
+            deliveries_list = Delivery.get_all_company_deliveries(company)
+            paginator = Paginator(deliveries_list, 10)
+            page = request.GET.get('page')
+
+            try:
+                deliveries = paginator.page(page)
+            except PageNotAnInteger:
+                deliveries = paginator.page(1)
+            except EmptyPage:
+                deliveries = paginator.page(paginator.num_pages)
+
+            context = {
+                "deliveries": deliveries,
+                "delivery-office": "option--active",
+            }
+
+            return render(request, "delivery_office.html", context)
+        else:
+            return HttpResponse(status=401, content="Nie jesteś uprawniony do wykonania tej operacji.")
+    else:
+        return HttpResponse(status=401, content="Nie jesteś uprawniony do wykonania tej operacji.")
