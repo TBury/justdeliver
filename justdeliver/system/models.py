@@ -65,6 +65,16 @@ class Driver(models.Model):
         total_income = Delivery.objects.filter(driver=self, is_edited=False, status="Zaakceptowana").aggregate(Sum('income'))
         return total_income
 
+    @property
+    def has_speditor_permissions(self):
+        has_speditor_permissions = False
+        if self.is_employed:
+            employee = Employee.objects.get(driver=self)
+            has_speditor_permissions = employee.check_speditor_permissions()
+        elif not self.is_employed:
+            has_speditor_permissions = True
+        return has_speditor_permissions
+
     def get_statistics(self):
         statistics: dict[str, int] = {
             'distance': self.distance,
@@ -82,7 +92,6 @@ class Driver(models.Model):
             'disposition': Disposition.get_disposition_for_driver(self),
             'vehicle': Vehicle.get_vehicle_for_driver(self),
             'last_deliveries': Delivery.get_last_deliveries_for_driver(self),
-            'is_employed': self.is_employed,
         }
         return info
 
@@ -205,6 +214,11 @@ class Employee(models.Model):
     driver = models.OneToOneField(Driver, on_delete=models.CASCADE)
     company = models.ForeignKey(Company, on_delete=models.CASCADE)
     job_title = models.CharField(max_length=64, choices=JOB_TITLES, default="Kierowca")
+
+    def check_speditor_permissions(self):
+        if self.job_title == "Właściciel" or self.job_title == "Spedytor":
+            return True
+        return False
 
     @staticmethod
     def create_employee(driver: Driver, company, job_title):

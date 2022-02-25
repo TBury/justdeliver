@@ -12,6 +12,8 @@ def dashboard(request):
     context = {
         "dashboard": "option--active",
         "info": info,
+        "is_employed": driver.is_employed,
+        "has_speditor_permissions": driver.has_speditor_permissions,
     }
     return render(request, "dashboard.html", context)
 
@@ -21,6 +23,7 @@ def select_delivery_adding_mode(request):
     context = {
         "add_new_delivery": "option--active",
         "is_employed": driver.is_employed,
+        "has_speditor_permissions": driver.has_speditor_permissions,
     }
     return render(request, "choose_delivery_method.html", context)
 
@@ -66,6 +69,7 @@ def add_delivery_details(request):
                     'disposition': disposition,
                     'add_new_delivery': 'option--active',
                     "is_employed": driver.is_employed,
+                    "has_speditor_permissions": driver.has_speditor_permissions,
                 }
                 return render(request, "add_delivery_details.html", context)
         except Delivery.DoesNotExist:
@@ -81,6 +85,7 @@ def drivers_card(request):
         "info": info,
         "drivers_card": "option--active",
         "is_employed": driver.is_employed,
+        "has_speditor_permissions": driver.has_speditor_permissions,
     }
     return render(request, "drivers_card.html", context)
 
@@ -94,6 +99,7 @@ def show_dispositions(request):
         'dispositions': dispositions,
         'dispositions_tag': "option--active",
         'is_employed': driver.is_employed,
+        "has_speditor_permissions": driver.has_speditor_permissions,
     }
     return render(request, "dispositions.html", context)
 
@@ -119,7 +125,7 @@ def accept_disposition(request, disposition_id):
 
 def delete_disposition(request, disposition_id):
     driver = Driver.get_driver_by_user_profile(request.user)
-    if not driver.is_employed:
+    if not driver.is_employed or (driver.is_employed and driver.job_title == "Właściciel" or driver.job_title == "Spedytor"):
         try:
             Disposition.delete_disposition(driver, disposition_id)
             return redirect("/dispositions")
@@ -147,13 +153,14 @@ def show_vehicles(request):
         'vehicles': vehicles,
         'vehicles_tag': "option--active",
         'is_employed': driver.is_employed,
+        "has_speditor_permissions": driver.has_speditor_permissions,
     }
     return render(request, "vehicles.html", context)
 
 
 def add_new_vehicle(request):
     driver = Driver.get_driver_by_user_profile(request.user)
-    if not driver.is_employed:
+    if not driver.is_employed or (driver.is_employed and driver.job_title == "Właściciel" or driver.job_title == "Spedytor"):
         if request.method == "POST":
             form = NewVehicleForm(request.POST)
             if form.is_valid():
@@ -169,6 +176,7 @@ def add_new_vehicle(request):
                 'form': NewVehicleForm(),
                 'vehicles_tag': "option--active",
                 'is_employed': driver.is_employed,
+                "has_speditor_permissions": driver.has_speditor_permissions,
             }
             return render(request, "add_new_vehicle.html", context)
     else:
@@ -177,7 +185,7 @@ def add_new_vehicle(request):
 
 def edit_vehicle(request, vehicle_id):
     driver = Driver.get_driver_by_user_profile(request.user)
-    if not driver.is_employed:
+    if not driver.is_employed or (driver.is_employed and driver.job_title == "Właściciel" or driver.job_title == "Spedytor"):
         vehicle = Vehicle.get_vehicle_from_id(driver, vehicle_id)
         if vehicle:
             if request.method == "POST":
@@ -197,6 +205,7 @@ def edit_vehicle(request, vehicle_id):
                     'vehicle': vehicle,
                     'vehicles_tag': "option--active",
                     'is_employed': driver.is_employed,
+                    "has_speditor_permissions": driver.has_speditor_permissions,
                 }
                 return render(request, "edit_vehicle.html", context)
         else:
@@ -207,7 +216,7 @@ def edit_vehicle(request, vehicle_id):
 
 def select_vehicle(request, vehicle_id):
     driver = Driver.get_driver_by_user_profile(request.user)
-    if not driver.is_employed:
+    if not driver.is_employed or (driver.is_employed and driver.job_title == "Właściciel" or driver.job_title == "Spedytor"):
         messages = Vehicle.change_selected_vehicle(driver, vehicle_id)
         if messages.get("error"):
             return HttpResponse(status=403, content="Pojazd nie istnieje.")
@@ -232,13 +241,14 @@ def show_offers(request):
         "offers": offers,
         "offers_market": "option--active",
         'is_employed': driver.is_employed,
+        "has_speditor_permissions": driver.has_speditor_permissions,
     }
     return render(request, "offers_market.html", context)
 
 
 def accept_offer(request, offer_id):
     driver = Driver.get_driver_by_user_profile(request.user)
-    if not driver.is_employed:
+    if not driver.is_employed or (driver.is_employed and driver.job_title == "Właściciel" or driver.job_title == "Spedytor"):
         offer = Offer.get_offer_by_id(offer_id)
         if offer:
             result = offer.accept_offer(driver)
@@ -267,6 +277,8 @@ def create_company(request):
             context = {
                 'form': CreateCompanyForm(),
                 "create_company": "option--active",
+                'is_employed': driver.is_employed,
+                "has_speditor_permissions": driver.has_speditor_permissions,
             }
         return render(request, "create_company.html", context)
     else:
@@ -290,6 +302,7 @@ def find_company(request):
         "companies": companies,
         "find_company": "option--active",
         'is_employed': driver.is_employed,
+        "has_speditor_permissions": driver.has_speditor_permissions,
     }
 
     return render(request, "find_company.html", context)
@@ -303,6 +316,7 @@ def show_company_details(request, company_id):
         "info": info,
         "find_company": "option--active",
         'is_employed': driver.is_employed,
+        "has_speditor_permissions": driver.has_speditor_permissions,
     }
     return render(request, "company_details.html", context)
 
@@ -325,6 +339,8 @@ def employee_application(request, company_id):
             context = {
                 'form': NewApplicationForm(),
                 "find_company": "option--active",
+                'is_employed': driver.is_employed,
+                "has_speditor_permissions": driver.has_speditor_permissions,
             }
             return render(request, "new_application_form.html", context)
     else:
@@ -351,6 +367,8 @@ def delivery_office(request):
                 context = {
                     "deliveries": deliveries,
                     "delivery-office": "option--active",
+                    'is_employed': driver.is_employed,
+                    "has_speditor_permissions": driver.has_speditor_permissions,
                 }
 
                 return render(request, "delivery_office.html", context)
@@ -381,6 +399,8 @@ def show_delivery_details(request, delivery_id):
                         'screenshots': screenshots,
                         'disposition': disposition,
                         'delivery-office': 'option--active',
+                        'is_employed': driver.is_employed,
+                        "has_speditor_permissions": driver.has_speditor_permissions,
                     }
                     return render(request, "delivery_details.html", context)
                 else:
