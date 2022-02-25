@@ -366,7 +366,7 @@ def delivery_office(request):
 
                 context = {
                     "deliveries": deliveries,
-                    "delivery-office": "option--active",
+                    "delivery_office": "option--active",
                     'is_employed': driver.is_employed,
                     "has_speditor_permissions": driver.has_speditor_permissions,
                 }
@@ -398,7 +398,7 @@ def show_delivery_details(request, delivery_id):
                         'delivery': delivery,
                         'screenshots': screenshots,
                         'disposition': disposition,
-                        'delivery-office': 'option--active',
+                        'delivery_office': 'option--active',
                         'is_employed': driver.is_employed,
                         "has_speditor_permissions": driver.has_speditor_permissions,
                     }
