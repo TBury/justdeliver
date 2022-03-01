@@ -440,3 +440,36 @@ def edit_delivery_status(request):
     else:
         return HttpResponse(status=405, content="Metoda niedozwolona. Wykonaj operację, korzystając z przycisku w"
                                                 " szczegółach zlecenia.")
+
+
+def manage_drivers(request):
+    driver = Driver.get_driver_by_user_profile(request.user)
+    if driver.is_employed:
+        if driver.company and driver.job_title == "Właściciel":
+            company = driver.company
+            company_drivers_list = Employee.get_all_company_employees(company)
+            if company_drivers_list:
+                paginator = Paginator(company_drivers_list, 10)
+                page = request.GET.get('page')
+
+                try:
+                    company_drivers = paginator.page(page)
+                except PageNotAnInteger:
+                    company_drivers = paginator.page(1)
+                except EmptyPage:
+                    company_drivers = paginator.page(paginator.num_pages)
+
+                context = {
+                    "company_drivers": company_drivers,
+                    "manage_drivers": "option--active",
+                    'is_employed': driver.is_employed,
+                    "has_speditor_permissions": driver.has_speditor_permissions,
+                }
+
+                return render(request, "manage_drivers.html", context)
+            else:
+                return HttpResponse(status=403, content="Nie jesteś uprawniony do wykonania tej operacji.")
+        else:
+            return HttpResponse(status=403, content="Nie jesteś uprawniony do wykonania tej operacji.")
+    else:
+        return HttpResponse(status=403, content="Nie jesteś uprawniony do wykonania tej operacji.")

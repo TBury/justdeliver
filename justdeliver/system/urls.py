@@ -25,4 +25,5 @@ urlpatterns = [
     path('Deliveries/', views.delivery_office),
     path('Delivery/<int:delivery_id>', views.show_delivery_details),
     path('Deliveries/ChangeDeliveryStatus', views.edit_delivery_status),
+    path('Company/ManageDrivers', views.manage_drivers),
 ]

@@ -221,6 +221,25 @@ class Employee(models.Model):
         return False
 
     @staticmethod
+    def get_all_company_employees(company):
+        try:
+            employees = []
+            company_employees = Employee.objects.filter(company=company)
+            for employee in company_employees:
+                last_delivery_date = Delivery.get_driver_last_delivery_date(employee.driver)
+                employee_dict = {
+                    "driver_id": employee.driver.id,
+                    "nick": employee.driver.nick,
+                    "job_title": employee.job_title,
+                    "last_delivery_date": last_delivery_date,
+                    "status": "OK",
+                }
+                employees.append(employee_dict)
+            return employees
+        except ValueError:
+            return {"error": "Błąd pobierania kierowców."}
+
+    @staticmethod
     def create_employee(driver: Driver, company, job_title):
         Employee.objects.create(
             driver=driver,
@@ -327,6 +346,14 @@ class Delivery(models.Model):
             return {"message": "Status zaktualizowany poprawnie."}
         else:
             return {"error": "Niepoprawny status dostawy."}
+
+    @staticmethod
+    def get_driver_last_delivery_date(driver: Driver):
+        try:
+            delivery_date = Delivery.objects.filter(driver=driver).order_by("-created_at").first()
+            return delivery_date.created_at
+        except Delivery.DoesNotExist:
+            return None
 
     @staticmethod
     def get_delivery_by_id(delivery_id: int):
