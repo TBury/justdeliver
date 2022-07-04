@@ -100,6 +100,13 @@ class Driver(models.Model):
         driver = Driver.objects.get(user=user)
         return driver
 
+
+    @staticmethod
+    def get_driver_by_driver_id(driver_id: int):
+        driver = Driver.objects.get(id=driver_id)
+        return driver
+
+
     def __str__(self):
         return self.nick
 

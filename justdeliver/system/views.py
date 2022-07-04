@@ -473,3 +473,23 @@ def manage_drivers(request):
             return HttpResponse(status=403, content="Nie jesteś uprawniony do wykonania tej operacji.")
     else:
         return HttpResponse(status=403, content="Nie jesteś uprawniony do wykonania tej operacji.")
+
+
+def company_driver_details(request, driver_id):
+    current_driver = Driver.get_driver_by_user_profile(request.user)
+    driver = Driver.get_driver_by_driver_id(driver_id)
+    if current_driver.is_employed:
+        if current_driver.company == driver.company:
+            info = driver.get_driver_info()
+            context = {
+                "info": info,
+                "drivers_card": "option--active",
+                "is_employed": driver.is_employed,
+                "has_speditor_permissions": driver.has_speditor_permissions,
+            }
+            return render(request, "drivers_card.html", context)
+        else:
+            return HttpResponse(status=403, content="Nie jesteś uprawniony do wykonania tej operacji.")
+    else:
+        return HttpResponse(status=403, content="Nie jesteś uprawniony do wykonania tej operacji.")
+
