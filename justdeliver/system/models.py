@@ -85,10 +85,15 @@ class Driver(models.Model):
         return statistics
 
     def get_driver_info(self):
+        if self.is_employed:
+            job_title = Employee.objects.get(driver=self).get_job_title_display()
+        else:
+            job_title = "Wolny kierowca"
         info: dict[Any, Any] = {
             'avatar': self.avatar,
             'nick': self.nick,
             'statistics': self.get_statistics(),
+            'job_title': job_title,
             'disposition': Disposition.get_disposition_for_driver(self),
             'vehicle': Vehicle.get_vehicle_for_driver(self),
             'last_deliveries': Delivery.get_last_deliveries_for_driver(self),
@@ -98,12 +103,6 @@ class Driver(models.Model):
     @staticmethod
     def get_driver_by_user_profile(user: User):
         driver = Driver.objects.get(user=user)
-        return driver
-
-
-    @staticmethod
-    def get_driver_by_driver_id(driver_id: int):
-        driver = Driver.objects.get(id=driver_id)
         return driver
 
 
@@ -213,19 +212,23 @@ class Company(models.Model):
 
 class Employee(models.Model):
     JOB_TITLES = (
-        ('Właściciel', 'owner'),
-        ('Spedytor', 'speditor'),
-        ('Kierowca', 'driver')
+        ('owner', 'Właściciel'),
+        ('speditor', 'Spedytor'),
+        ('driver', 'Kierowca')
     )
 
     driver = models.OneToOneField(Driver, on_delete=models.CASCADE)
-    company = models.ForeignKey(Company, on_delete=models.CASCADE)
-    job_title = models.CharField(max_length=64, choices=JOB_TITLES, default="Kierowca")
+    company = models.ForeignKey(Company, on_delete=models.CASCADE, blank=True)
+    job_title = models.CharField(max_length=64, choices=JOB_TITLES, default="driver")
 
     def check_speditor_permissions(self):
-        if self.job_title == "Właściciel" or self.job_title == "Spedytor":
+        if self.job_title == "owner" or self.job_title == "speditor":
             return True
         return False
+
+    def get_driver_info(self):
+        info = self.driver.get_driver_info
+        return info
 
     @staticmethod
     def get_all_company_employees(company):
@@ -235,11 +238,11 @@ class Employee(models.Model):
             for employee in company_employees:
                 last_delivery_date = Delivery.get_driver_last_delivery_date(employee.driver)
                 employee_dict = {
-                    "driver_id": employee.driver.id,
+                    "id": employee.id,
                     "nick": employee.driver.nick,
-                    "job_title": employee.job_title,
+                    "job_title": employee.get_job_title_display(),
                     "last_delivery_date": last_delivery_date,
-                    "status": "OK",
+                    "status": "OK", #TODO: ustalić metodę określania statusu
                 }
                 employees.append(employee_dict)
             return employees
@@ -254,6 +257,12 @@ class Employee(models.Model):
             job_title = job_title,
         )
         return {"message": f"Pracownik {driver.nick} dodany poprawnie."}
+
+
+    @staticmethod
+    def get_employee_by_id(employee_id: int):
+        employee = Employee.objects.get(id=employee_id)
+        return employee
 
 
 class Vehicle(models.Model):
@@ -358,7 +367,10 @@ class Delivery(models.Model):
     def get_driver_last_delivery_date(driver: Driver):
         try:
             delivery_date = Delivery.objects.filter(driver=driver).order_by("-created_at").first()
-            return delivery_date.created_at
+            if delivery_date:
+                return delivery_date.created_at
+            else:
+                return None
         except Delivery.DoesNotExist:
             return None
 

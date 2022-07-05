@@ -26,5 +26,6 @@ urlpatterns = [
     path('Delivery/<int:delivery_id>', views.show_delivery_details),
     path('Deliveries/ChangeDeliveryStatus', views.edit_delivery_status),
     path('Company/ManageDrivers', views.manage_drivers),
-    path('Company/Drivers/<int:driver_id>', views.company_driver_details),
+    path('Company/Drivers/<int:employee_id>', views.company_driver_details),
+    path('Company/Drivers/<int:employee_id>/EditProfile', views.edit_driver_profile)
 ]

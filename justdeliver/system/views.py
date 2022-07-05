@@ -3,7 +3,8 @@ from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from .models import Driver, Disposition, DeliveryScreenshot, Delivery, Vehicle, Offer, Company, Employee
-from .forms import NewDeliveryForm, NewVehicleForm, EditVehicleForm, CreateCompanyForm, NewApplicationForm
+from .forms import NewDeliveryForm, NewVehicleForm, EditVehicleForm, CreateCompanyForm, NewApplicationForm, \
+    EditEmployeeForm
 
 
 def dashboard(request):
@@ -125,7 +126,7 @@ def accept_disposition(request, disposition_id):
 
 def delete_disposition(request, disposition_id):
     driver = Driver.get_driver_by_user_profile(request.user)
-    if not driver.is_employed or (driver.is_employed and driver.job_title == "Właściciel" or driver.job_title == "Spedytor"):
+    if not driver.is_employed or (driver.is_employed and driver.job_title == "owner" or driver.job_title == "speditor"):
         try:
             Disposition.delete_disposition(driver, disposition_id)
             return redirect("/dispositions")
@@ -160,7 +161,7 @@ def show_vehicles(request):
 
 def add_new_vehicle(request):
     driver = Driver.get_driver_by_user_profile(request.user)
-    if not driver.is_employed or (driver.is_employed and driver.job_title == "Właściciel" or driver.job_title == "Spedytor"):
+    if not driver.is_employed or (driver.is_employed and driver.job_title == "owner" or driver.job_title == "speditor"):
         if request.method == "POST":
             form = NewVehicleForm(request.POST)
             if form.is_valid():
@@ -185,7 +186,7 @@ def add_new_vehicle(request):
 
 def edit_vehicle(request, vehicle_id):
     driver = Driver.get_driver_by_user_profile(request.user)
-    if not driver.is_employed or (driver.is_employed and driver.job_title == "Właściciel" or driver.job_title == "Spedytor"):
+    if not driver.is_employed or (driver.is_employed and driver.job_title == "owner" or driver.job_title == "speditor"):
         vehicle = Vehicle.get_vehicle_from_id(driver, vehicle_id)
         if vehicle:
             if request.method == "POST":
@@ -216,7 +217,7 @@ def edit_vehicle(request, vehicle_id):
 
 def select_vehicle(request, vehicle_id):
     driver = Driver.get_driver_by_user_profile(request.user)
-    if not driver.is_employed or (driver.is_employed and driver.job_title == "Właściciel" or driver.job_title == "Spedytor"):
+    if not driver.is_employed or (driver.is_employed and driver.job_title == "owner" or driver.job_title == "speditor"):
         messages = Vehicle.change_selected_vehicle(driver, vehicle_id)
         if messages.get("error"):
             return HttpResponse(status=403, content="Pojazd nie istnieje.")
@@ -248,7 +249,7 @@ def show_offers(request):
 
 def accept_offer(request, offer_id):
     driver = Driver.get_driver_by_user_profile(request.user)
-    if not driver.is_employed or (driver.is_employed and driver.job_title == "Właściciel" or driver.job_title == "Spedytor"):
+    if not driver.is_employed or (driver.is_employed and driver.job_title == "owner" or driver.job_title == "speditor"):
         offer = Offer.get_offer_by_id(offer_id)
         if offer:
             result = offer.accept_offer(driver)
@@ -350,7 +351,7 @@ def employee_application(request, company_id):
 def delivery_office(request):
     driver = Driver.get_driver_by_user_profile(request.user)
     if driver.is_employed:
-        if driver.company and (driver.job_title == "Właściciel" or driver.job_title == "Spedytor"):
+        if driver.company and (driver.job_title == "owner" or driver.job_title == "speditor"):
             company = driver.company
             deliveries_list = Delivery.get_all_company_deliveries(driver, company)
             if deliveries_list:
@@ -383,7 +384,7 @@ def delivery_office(request):
 def show_delivery_details(request, delivery_id):
     driver = Driver.get_driver_by_user_profile(request.user)
     if driver.is_employed:
-        if driver.company and (driver.job_title == "Właściciel" or driver.job_title == "Spedytor"):
+        if driver.company and (driver.job_title == "owner" or driver.job_title == "speditor"):
             try:
                 delivery = Delivery.get_delivery_by_id(delivery_id)
                 if delivery.driver.company == driver.company:
@@ -418,7 +419,7 @@ def edit_delivery_status(request):
         body = json.loads(request.body.decode("utf-8"))
         driver = Driver.get_driver_by_user_profile(request.user)
         if driver.is_employed:
-            if driver.company and (driver.job_title == "Właściciel" or driver.job_title == "Spedytor"):
+            if driver.company and (driver.job_title == "owner" or driver.job_title == "speditor"):
                 try:
                     delivery_id = body.get("delivery_id")
                     delivery = Delivery.get_delivery_by_id(delivery_id)
@@ -445,7 +446,7 @@ def edit_delivery_status(request):
 def manage_drivers(request):
     driver = Driver.get_driver_by_user_profile(request.user)
     if driver.is_employed:
-        if driver.company and driver.job_title == "Właściciel":
+        if driver.company and driver.job_title == "owner":
             company = driver.company
             company_drivers_list = Employee.get_all_company_employees(company)
             if company_drivers_list:
@@ -475,17 +476,17 @@ def manage_drivers(request):
         return HttpResponse(status=403, content="Nie jesteś uprawniony do wykonania tej operacji.")
 
 
-def company_driver_details(request, driver_id):
+def company_driver_details(request, employee_id):
     current_driver = Driver.get_driver_by_user_profile(request.user)
-    driver = Driver.get_driver_by_driver_id(driver_id)
-    if current_driver.is_employed:
-        if current_driver.company == driver.company:
-            info = driver.get_driver_info()
+    employee = Employee.get_employee_by_id(employee_id)
+    if current_driver.is_employed and employee:
+        if current_driver.company == employee.company:
+            info = employee.get_driver_info()
             context = {
                 "info": info,
-                "drivers_card": "option--active",
-                "is_employed": driver.is_employed,
-                "has_speditor_permissions": driver.has_speditor_permissions,
+                "manage_drivers": "option--active",
+                "is_employed": current_driver.is_employed,
+                "has_speditor_permissions": current_driver.has_speditor_permissions,
             }
             return render(request, "drivers_card.html", context)
         else:
@@ -493,3 +494,31 @@ def company_driver_details(request, driver_id):
     else:
         return HttpResponse(status=403, content="Nie jesteś uprawniony do wykonania tej operacji.")
 
+
+def edit_driver_profile(request, employee_id):
+    current_driver = Driver.get_driver_by_user_profile(request.user)
+    employee = Employee.get_employee_by_id(employee_id)
+    if current_driver.is_employed and employee:
+        if current_driver.company and current_driver.job_title == "owner" and current_driver.company == employee.company:
+            if request.method == "POST" and request.POST:
+                form = EditEmployeeForm(request.POST, instance=employee)
+                if form.is_valid():
+                    form.save()
+                    return redirect("/Company/ManageDrivers")
+                else:
+                    return HttpResponse(content=form.errors)
+            else:
+                info = employee.get_driver_info()
+                form = EditEmployeeForm(instance=employee)
+                context = {
+                    "info": info,
+                    "manage_drivers": "option--active",
+                    "is_employed": current_driver.is_employed,
+                    "has_speditor_permissions": current_driver.has_speditor_permissions,
+                    "form": form,
+                }
+            return render(request, "edit_driver.html", context)
+        else:
+            return HttpResponse(status=403, content="Nie jesteś uprawniony do wykonania tej operacji.")
+    else:
+        return HttpResponse(status=403, content="Nie jesteś uprawniony do wykonania tej operacji.")
