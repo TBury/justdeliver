@@ -1,10 +1,10 @@
 import json
 from django.shortcuts import render, redirect
-from django.http import HttpResponse
+from django.core import serializers
+from django.http import HttpResponse, JsonResponse
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from .models import Driver, Disposition, DeliveryScreenshot, Delivery, Vehicle, Offer, Company, Employee
-from .forms import NewDeliveryForm, NewVehicleForm, EditVehicleForm, CreateCompanyForm, NewApplicationForm, \
-    EditEmployeeForm
+from .forms import *
 
 
 def dashboard(request):
@@ -161,15 +161,15 @@ def show_vehicles(request):
 
 def add_new_vehicle(request):
     driver = Driver.get_driver_by_user_profile(request.user)
-    if not driver.is_employed or (driver.is_employed and driver.job_title == "owner" or driver.job_title == "speditor"):
+    if driver.is_employed and driver.job_title == "owner" or driver.job_title == "speditor":
         if request.method == "POST":
             form = NewVehicleForm(request.POST)
             if form.is_valid():
                 vehicle = form.save(commit=False)
-                vehicle.driver_owner = driver
+                vehicle.company_owner = driver.company
                 vehicle.photo = request.FILES.get("photo")
                 vehicle.save()
-                return redirect("/vehicles")
+                return redirect("/Company/Vehicles")
             else:
                 print(form.errors)
         else:
@@ -186,18 +186,17 @@ def add_new_vehicle(request):
 
 def edit_vehicle(request, vehicle_id):
     driver = Driver.get_driver_by_user_profile(request.user)
-    if not driver.is_employed or (driver.is_employed and driver.job_title == "owner" or driver.job_title == "speditor"):
-        vehicle = Vehicle.get_vehicle_from_id(driver, vehicle_id)
+    if driver.is_employed and driver.job_title == "owner" or driver.job_title == "speditor":
+        vehicle = Vehicle.get_vehicle_from_id(vehicle_id)
         if vehicle:
             if request.method == "POST":
                 form = EditVehicleForm(request.POST, instance=vehicle)
                 if form.is_valid():
                     edited_vehicle = form.save(commit=False)
-                    edited_vehicle.driver_owner = driver
                     if request.FILES.get("photo"):
                         edited_vehicle.photo = request.FILES.get("photo")
                     edited_vehicle.save()
-                    return redirect("/vehicles")
+                    return redirect("/Company/Vehicles")
                 else:
                     print(form.errors)
             else:
@@ -512,6 +511,7 @@ def edit_driver_profile(request, employee_id):
                 form = EditEmployeeForm(instance=employee)
                 context = {
                     "info": info,
+                    "employee_id": employee_id,
                     "manage_drivers": "option--active",
                     "is_employed": current_driver.is_employed,
                     "has_speditor_permissions": current_driver.has_speditor_permissions,
@@ -522,3 +522,79 @@ def edit_driver_profile(request, employee_id):
             return HttpResponse(status=403, content="Nie jesteś uprawniony do wykonania tej operacji.")
     else:
         return HttpResponse(status=403, content="Nie jesteś uprawniony do wykonania tej operacji.")
+
+
+def dismiss_driver(request, employee_id):
+    current_driver = Driver.get_driver_by_user_profile(request.user)
+    employee = Employee.get_employee_by_id(employee_id)
+    if current_driver.is_employed:
+        if current_driver.company and current_driver.job_title == "owner" and current_driver.company == employee.company:
+            employee.dismiss_employee()
+            return redirect("/Company/ManageDrivers")
+        else:
+            return HttpResponse(status=403, content="Nie jesteś uprawniony do wykonania tej operacji.")
+    else:
+        return HttpResponse(status=403, content="Nie jesteś uprawniony do wykonania tej operacji.")
+
+
+def hire_driver(request):
+    current_driver = Driver.get_driver_by_user_profile(request.user)
+    if current_driver.is_employed:
+        if current_driver.company and current_driver.job_title == "owner":
+            if request.method == "POST" and request.POST:
+                form = AddEmployeeForm(request.POST)
+                if form.is_valid():
+                    new_employee = form.save(commit=False)
+                    #tutaj wstawić metodę do zapisu wszystkich rzeczy z modelu Employee
+                    #typu dodawanie pojazdu itp
+                    new_employee.save()
+                    return redirect("/Company/ManageDrivers")
+                else:
+                    return HttpResponse(content=form.errors)
+            else:
+                vehicles = current_driver.company.get_free_vehicles()
+                form = AddEmployeeForm()
+                context = {
+                    "manage_drivers": "option--active",
+                    "is_employed": current_driver.is_employed,
+                    "has_speditor_permissions": current_driver.has_speditor_permissions,
+                    "form": form,
+                    "vehicles": vehicles,
+                }
+            return render(request, "add_driver.html", context)
+        else:
+            return HttpResponse(status=403, content="Nie jesteś uprawniony do wykonania tej operacji.")
+    else:
+        return HttpResponse(status=403, content="Nie jesteś uprawniony do wykonania tej operacji.")
+
+
+def find_driver(request, nickname):
+    current_driver = Driver.get_driver_by_user_profile(request.user)
+    if current_driver.is_employed:
+        if current_driver.company and current_driver.job_title == "owner":
+            if nickname:
+                drivers = Driver.find_driver_by_nickname(nickname)
+                if drivers:
+                    return JsonResponse({'drivers': list(drivers)})
+                else:
+                    return JsonResponse({"message": "Nie znaleziono kierowców spełniających żądanie."})
+            else:
+                return HttpResponse(status=401, content="Nieprawidłowa nazwa użytkownika lub jej brak.")
+        else:
+            return HttpResponse(status=403, content="Nie jesteś uprawniony do wykonania tej operacji.")
+    else:
+        return HttpResponse(status=403, content="Nie jesteś uprawniony do wykonania tej operacji.")
+
+
+def show_company_vehicles(request):
+    driver = Driver.get_driver_by_user_profile(request.user)
+    vehicles = Vehicle.get_company_vehicles(driver.company)
+    current_vehicle = Vehicle.get_vehicle_for_driver(driver)
+    context = {
+        'current_vehicle': current_vehicle,
+        'vehicles': vehicles,
+        'vehicles_tag': "option--active",
+        'is_employed': driver.is_employed,
+        "has_speditor_permissions": driver.has_speditor_permissions,
+    }
+    return render(request, "vehicles.html", context)

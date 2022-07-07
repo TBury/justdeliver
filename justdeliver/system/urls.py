@@ -27,5 +27,10 @@ urlpatterns = [
     path('Deliveries/ChangeDeliveryStatus', views.edit_delivery_status),
     path('Company/ManageDrivers', views.manage_drivers),
     path('Company/Drivers/<int:employee_id>', views.company_driver_details),
-    path('Company/Drivers/<int:employee_id>/EditProfile', views.edit_driver_profile)
+    path('Company/Drivers/<int:employee_id>/EditProfile', views.edit_driver_profile),
+    path('Company/Drivers/DismissDriver/<int:employee_id>', views.dismiss_driver),
+    path('Company/Drivers/HireDriver', views.hire_driver),
+    path('Drivers/FindDriver/<str:nickname>', views.find_driver),
+    path('Company/Vehicles', views.show_company_vehicles),
+    path('Company/Vehicles/AddNewVehicle', views.add_new_vehicle),
 ]

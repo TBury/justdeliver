@@ -7,8 +7,9 @@ import datetime
 from django.conf import settings as django_settings
 from django.contrib.auth.models import User
 from django.db import models
-from django.db.models import Sum
+from django.db.models import Sum, Q
 from django.utils import timezone
+
 
 from huey import crontab
 from huey.contrib import djhuey as huey
@@ -86,16 +87,20 @@ class Driver(models.Model):
 
     def get_driver_info(self):
         if self.is_employed:
-            job_title = Employee.objects.get(driver=self).get_job_title_display()
+            employee = Employee.objects.get(driver=self)
+            job_title = employee.get_job_title_display()
+            vehicle = Vehicle.get_vehicle_for_driver(employee=employee)
         else:
             job_title = "Wolny kierowca"
+            vehicle = Vehicle.get_vehicle_for_driver(driver=self)
         info: dict[Any, Any] = {
+            'id': self.id,
             'avatar': self.avatar,
             'nick': self.nick,
             'statistics': self.get_statistics(),
             'job_title': job_title,
             'disposition': Disposition.get_disposition_for_driver(self),
-            'vehicle': Vehicle.get_vehicle_for_driver(self),
+            'vehicle': vehicle,
             'last_deliveries': Delivery.get_last_deliveries_for_driver(self),
         }
         return info
@@ -105,6 +110,11 @@ class Driver(models.Model):
         driver = Driver.objects.get(user=user)
         return driver
 
+    @staticmethod
+    def find_driver_by_nickname(nick: str):
+        all_drivers = Driver.objects.filter(nick__icontains=nick)
+        drivers = [{"nick": driver.nick, "avatar": driver.avatar.url, "id": driver.id} for driver in all_drivers if not driver.is_employed]
+        return drivers
 
     def __str__(self):
         return self.nick
@@ -176,6 +186,13 @@ class Company(models.Model):
         }
         return statistics
 
+
+    def get_free_vehicles(self):
+        if self.company_vehicles:
+            vehicles = [vehicle for vehicle in self.company_vehicles if not vehicle.driver_owner]
+            return vehicles
+        return None
+
     def get_company_info(self):
         info = {
             "company_id": self.id,
@@ -209,6 +226,8 @@ class Company(models.Model):
         except ValueError:
             return {"error": "Brak firm, które można byłoby wyświetlić."}
 
+    def __str__(self):
+        return self.name
 
 class Employee(models.Model):
     JOB_TITLES = (
@@ -227,8 +246,12 @@ class Employee(models.Model):
         return False
 
     def get_driver_info(self):
-        info = self.driver.get_driver_info
+        info = self.driver.get_driver_info()
         return info
+
+    def dismiss_employee(self):
+        self.delete()
+        return {"message": f"Pracownik {self.driver.nick} został zwolniony."}
 
     @staticmethod
     def get_all_company_employees(company):
@@ -258,12 +281,13 @@ class Employee(models.Model):
         )
         return {"message": f"Pracownik {driver.nick} dodany poprawnie."}
 
-
     @staticmethod
     def get_employee_by_id(employee_id: int):
         employee = Employee.objects.get(id=employee_id)
         return employee
 
+    def __str__(self):
+        return self.driver.nick
 
 class Vehicle(models.Model):
     MANUFACTURERS = (
@@ -287,12 +311,15 @@ class Vehicle(models.Model):
     license_plate = models.CharField(max_length=10)
     is_drawed = models.BooleanField(default=False)
     company_owner = models.ForeignKey(Company, on_delete=models.CASCADE, null=True, blank=True)
-    driver_owner = models.ForeignKey(Driver, on_delete=models.CASCADE, null=True, blank=True, related_name="driver_owner")
+    driver_owner = models.ForeignKey(Employee, on_delete=models.SET_NULL, null=True, blank=True, related_name="driver_owner")
 
     @staticmethod
-    def get_vehicle_for_driver(driver: Driver):
+    def get_vehicle_for_driver(driver=None, employee=None):
         try:
-            vehicle = Vehicle.objects.get(driver=driver, driver_owner=driver)
+            if driver:
+                vehicle = Vehicle.objects.get(driver=driver)
+            elif employee:
+                vehicle = Vehicle.objects.get(employee=employee)
             return vehicle
         except Vehicle.DoesNotExist:
             return None
@@ -306,9 +333,17 @@ class Vehicle(models.Model):
             return None
 
     @staticmethod
-    def get_vehicle_from_id(driver: Driver, vehicle_id: int):
+    def get_company_vehicles(company: Company):
         try:
-            vehicle = Vehicle.objects.get(driver_owner=driver, id=vehicle_id)
+            vehicles = Vehicle.objects.filter(company_owner=company)
+            return vehicles
+        except Vehicle.DoesNotExist:
+            return None
+
+    @staticmethod
+    def get_vehicle_from_id(vehicle_id: int):
+        try:
+            vehicle = Vehicle.objects.get(id=vehicle_id)
             return vehicle
         except Vehicle.DoesNotExist:
             return None
