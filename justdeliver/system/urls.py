@@ -34,4 +34,5 @@ urlpatterns = [
     path('Drivers/FindDriver/<str:nickname>', views.find_driver),
     path('Company/Vehicles', views.show_company_vehicles),
     path('Company/Vehicles/AddNewVehicle', views.add_new_vehicle),
+    path('Company/Dispositions', views.show_company_dispositions),
 ]

@@ -41,7 +41,7 @@ def upload_screenshots(request):
         return HttpResponse(status=200, content="Poprawnie utworzono list przewozowy.")
     else:
         return HttpResponse(status=405, content="Błędna metoda HTTP. Upewnij się, "
-                                                     "że korzystasz z formularza do screenshotów.")
+                                                "że korzystasz z formularza do screenshotów.")
 
 
 def add_delivery_details(request):
@@ -106,13 +106,26 @@ def show_dispositions(request):
 
 
 def generate_disposition(request):
-    if request.POST:
-        driver = Driver.get_driver_by_user_profile(request.user)
-        if Disposition.generate_disposition(driver, request.POST):
-            return redirect("/dashboard")
+    driver = Driver.get_driver_by_user_profile(request.user)
+    if driver.is_employed and driver.job_title == "owner" or driver.job_title == "speditor":
+        if request.POST:
+            if Disposition.generate_disposition(request.POST.get("driver"), request.POST):
+                print(request.POST)
+                return redirect("/Company/Dispositions")
+            else:
+                return HttpResponse(status=403, content="Błąd generowania dyspozycji.")
         else:
-            return HttpResponse(status=403, content="Błąd generowania dyspozycji.")
-    return render(request, "generate_disposition.html")
+            employees = Employee.get_all_company_employees(driver.company)
+            context = {
+                'employees': employees,
+                'company_dispositions_tag': "option--active",
+                'is_employed': driver.is_employed,
+                "has_speditor_permissions": driver.has_speditor_permissions,
+            }
+            return render(request, "generate_disposition.html", context)
+    else:
+        return HttpResponse(status=403, content="Nie masz uprawnień do generowania dyspozycji.")
+
 
 
 def accept_disposition(request, disposition_id):
@@ -615,3 +628,23 @@ def delete_vehicle(request, vehicle_id):
         return redirect("/Company/Vehicles")
     else:
         return HttpResponse(status=403, content="Nie masz uprawnień do wybierania innego pojazdu.")
+
+def show_company_dispositions(request):
+    driver = Driver.get_driver_by_user_profile(request.user)
+    dispositions_list = Disposition.get_company_dispositions(driver.company)
+
+    paginator = Paginator(dispositions_list, 7)
+    page = request.GET.get('page')
+    try:
+        dispositions = paginator.page(page)
+    except PageNotAnInteger:
+        dispositions = paginator.page(1)
+    except EmptyPage:
+        dispositions = paginator.page(paginator.num_pages)
+    context = {
+        'dispositions': dispositions,
+        'company_dispositions_tag': "option--active",
+        'is_employed': driver.is_employed,
+        "has_speditor_permissions": driver.has_speditor_permissions,
+    }
+    return render(request, "company_dispositions.html", context)

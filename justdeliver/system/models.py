@@ -678,7 +678,7 @@ class Disposition(models.Model):
             return "Nie znaleziono dyspozycji o danym id."
 
     @staticmethod
-    def generate_disposition(driver: Driver, data: Dict):
+    def generate_disposition(driver: str, data: Dict):
         cities_file = open(os.path.join(django_settings.STATIC_ROOT, 'files/cities.json'), "r", encoding="UTF-8")
         cities = json.loads(cities_file.read())
         cities_file.close()
@@ -689,21 +689,22 @@ class Disposition(models.Model):
                 for json_city in cities["response"]:
                     if json_city.get("realName") == last_accepted_waybill.unloading_city:
                         loading_city = json_city
+                        if not loading_city:
+                            print(f"Error: {loading_city} not found in cities list.")
+                            return None
                         break
-                if not loading_city:
-                    print(f"Error: {loading_city} not found in cities list.")
-                    return None
+
             else:
                 loading_country = data.get("loading_country")
-                unloading_country = data.get("unloading_country")
                 if loading_country != "random":
                     loading_cities = []
                     for json_city in cities["response"]:
                         if json_city.get("country") == loading_country:
                             #If there isn't promods checked, we need only no-promods cities
-                            if not "promods" in data.get("modification"):
-                                if json_city.get("mod") != "promods":
-                                    loading_cities.append(json_city)
+                            if data.get("modification"):
+                                if not "promods" in data.get("modification"):
+                                    if json_city.get("mod") != "promods":
+                                        loading_cities.append(json_city)
                             #if not, all cities within country are ok
                             else:
                                 loading_cities.append(json_city)
@@ -716,7 +717,7 @@ class Disposition(models.Model):
                     else:
                         loading_city_number = randrange(0, 279)
                     loading_city = cities["response"][loading_city_number]
-
+            unloading_country = data.get("unloading_country")
             if unloading_country != "random":
                 unloading_cities = []
                 for json_city in cities["response"]:
@@ -761,8 +762,10 @@ class Disposition(models.Model):
         except IndexError:
             return None
 
+        employee = Employee.get_employee_by_id(int(driver))
+
         Disposition.objects.create(
-            driver = driver,
+            driver = employee.driver,
             loading_city = loading_city.get("realName"),
             loading_spedition = loading_spedition,
             unloading_city = unloading_city.get("realName"),
@@ -779,6 +782,18 @@ class Disposition(models.Model):
             disposition = Disposition.objects.get(driver=driver, is_accepted=True)
             return disposition
         except Disposition.DoesNotExist:
+            return None
+
+
+    @staticmethod
+    def get_company_dispositions(company: Company):
+        if company:
+            dispositions = []
+            employees = company.drivers_list
+            for employee in employees:
+                dispositions += Disposition.objects.filter(driver=employee.driver)
+            return dispositions
+        else:
             return None
 
     @staticmethod
