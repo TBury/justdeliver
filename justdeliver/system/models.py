@@ -283,8 +283,19 @@ class Employee(models.Model):
 
     @staticmethod
     def get_employee_by_id(employee_id: int):
-        employee = Employee.objects.get(id=employee_id)
-        return employee
+        try:
+            employee = Employee.objects.get(id=employee_id)
+            return employee
+        except Employee.DoesNotExist:
+            return None
+
+    @staticmethod
+    def get_employee_by_driver_account(driver: Driver):
+        try:
+            employee = Employee.objects.get(driver=driver)
+            return employee
+        except Employee.DoesNotExist:
+            return None
 
     def __str__(self):
         return self.driver.nick
@@ -304,7 +315,7 @@ class Vehicle(models.Model):
     driver = models.ForeignKey(Driver, null=True, blank=True, on_delete=models.SET_NULL)
     model = models.CharField(max_length=64)
     photo = models.ImageField(upload_to='vehicles')
-    cabin = models.CharField(max_length=10)
+    cabin = models.CharField(max_length=32)
     engine = models.PositiveSmallIntegerField(default=0)
     chassis = models.CharField(max_length=16, default="4x2")
     odometer = models.PositiveIntegerField(default=0)
@@ -319,7 +330,7 @@ class Vehicle(models.Model):
             if driver:
                 vehicle = Vehicle.objects.get(driver=driver)
             elif employee:
-                vehicle = Vehicle.objects.get(employee=employee)
+                vehicle = Vehicle.objects.get(driver_owner=employee)
             return vehicle
         except Vehicle.DoesNotExist:
             return None
@@ -354,6 +365,15 @@ class Vehicle(models.Model):
             current_vehicle = Vehicle.objects.filter(driver_owner=driver, driver=driver).update(driver=None)
             new_selected_vehicle = Vehicle.objects.filter(driver_owner=driver, id=vehicle_id).update(driver=driver)
             return {"message": "Pojazd zaktualizowany poprawnie."}
+        except Vehicle.DoesNotExist:
+            return {"error": "Pojazd nie istnieje."}
+
+    @staticmethod
+    def delete_vehicle(vehicle_id: int):
+        try:
+            vehicle = Vehicle.get_vehicle_from_id(vehicle_id)
+            vehicle.delete()
+            return {"message": "Pojazd został usunięty poprawnie."}
         except Vehicle.DoesNotExist:
             return {"error": "Pojazd nie istnieje."}
 

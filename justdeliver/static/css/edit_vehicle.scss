@@ -213,3 +213,62 @@ select {
 #id_cabin {
     display: none;
 }
+
+.form__input--owner-input {
+    margin-left: 48px;
+}
+
+#driver--dismiss {
+    background-color: white;
+    border: 1px solid #C51616;
+    color: #C51616;
+}
+
+
+#driver--dismiss {
+    cursor: pointer;
+    border-radius: 5px;
+    width: 200px;
+    height: 24px;
+    display: flex;
+    text-decoration: none;
+    align-items: center;
+    justify-content: center;
+    padding: 10px;
+    font-weight: 700;
+    margin-left: 24px;
+    margin-bottom: 24px;
+    gap: 10px;
+}
+
+select {
+    background-color: white;
+    width: 300px;
+    border: 1px solid #d8d8d8;
+    height: 40px;
+    padding-left: 8px;
+}
+
+.alert__title {
+    font-weight: 700;
+    margin: 16px 0 0 32px;
+    font-size: 18px;
+}
+  
+.alert__description {
+    margin-left: 32px;
+    margin-top: 4px;
+    margin-bottom: 24px;
+    font-size: 14px;
+}
+
+.dismiss-driver__alert {
+    background: #f5c7c7;
+    border-radius: 10px;
+    color: #C51616;
+    margin-top: 16px;
+    margin-left: 48px;
+    width: 1100px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+}

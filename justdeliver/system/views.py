@@ -147,7 +147,7 @@ def cancel_disposition(request, disposition_id):
 
 def show_vehicles(request):
     driver = Driver.get_driver_by_user_profile(request.user)
-    current_vehicle = Vehicle.get_vehicle_for_driver(driver)
+    current_vehicle = Vehicle.get_vehicle_for_driver(driver=driver)
     vehicles = Vehicle.get_driver_vehicles(driver)
     context = {
         'current_vehicle': current_vehicle,
@@ -171,7 +171,7 @@ def add_new_vehicle(request):
                 vehicle.save()
                 return redirect("/Company/Vehicles")
             else:
-                print(form.errors)
+                return HttpResponse(status=500, content=form.errors.as_json())
         else:
             context = {
                 'form': NewVehicleForm(),
@@ -191,17 +191,23 @@ def edit_vehicle(request, vehicle_id):
         if vehicle:
             if request.method == "POST":
                 form = EditVehicleForm(request.POST, instance=vehicle)
+                print(request.POST)
                 if form.is_valid():
                     edited_vehicle = form.save(commit=False)
                     if request.FILES.get("photo"):
                         edited_vehicle.photo = request.FILES.get("photo")
+                    if request.POST.get("owner"):
+                        new_driver = Employee.get_employee_by_id(int(request.POST.get("owner")))
+                        vehicle.driver_owner = new_driver
                     edited_vehicle.save()
                     return redirect("/Company/Vehicles")
                 else:
                     print(form.errors)
             else:
+                employees = driver.company.drivers_list
                 context = {
                     'form': EditVehicleForm(instance=vehicle),
+                    'employees': employees,
                     'vehicle': vehicle,
                     'vehicles_tag': "option--active",
                     'is_employed': driver.is_employed,
@@ -588,8 +594,9 @@ def find_driver(request, nickname):
 
 def show_company_vehicles(request):
     driver = Driver.get_driver_by_user_profile(request.user)
+    employee = Employee.get_employee_by_driver_account(driver)
     vehicles = Vehicle.get_company_vehicles(driver.company)
-    current_vehicle = Vehicle.get_vehicle_for_driver(driver)
+    current_vehicle = Vehicle.get_vehicle_for_driver(employee=employee)
     context = {
         'current_vehicle': current_vehicle,
         'vehicles': vehicles,
@@ -598,3 +605,13 @@ def show_company_vehicles(request):
         "has_speditor_permissions": driver.has_speditor_permissions,
     }
     return render(request, "vehicles.html", context)
+
+def delete_vehicle(request, vehicle_id):
+    driver = Driver.get_driver_by_user_profile(request.user)
+    if driver.is_employed and driver.job_title == "owner":
+        messages = Vehicle.delete_vehicle(vehicle_id)
+        if messages.get("error"):
+            return HttpResponse(status=401, content="Pojazd nie istnieje.")
+        return redirect("/Company/Vehicles")
+    else:
+        return HttpResponse(status=403, content="Nie masz uprawnień do wybierania innego pojazdu.")
