@@ -706,3 +706,57 @@ def show_company_applications(request):
             return HttpResponse(status=403, content="Nie jesteś uprawniony do wykonania tej operacji.")
     else:
         return HttpResponse(status=403, content="Nie jesteś uprawniony do wykonania tej operacji.")
+
+def check_application(request, application_id):
+    current_driver = Driver.get_driver_by_user_profile(request.user)
+    if current_driver.is_employed:
+        if current_driver.company and current_driver.job_title == "owner":
+            application = EmployeeApplication.get_application_by_id(application_id)
+            dlc = application.decode_dlc()
+            if application:
+                context = {
+                    'application': application,
+                    'dlc': dlc,
+                    'company_applications': "option--active",
+                    'is_employed': current_driver.is_employed,
+                    "has_speditor_permissions": current_driver.has_speditor_permissions,
+                }
+            else:
+                return HttpResponse(status=401, content="Nie znaleziono aplikacji o takim id.")
+            return render(request, "application_details.html", context)
+        else:
+            return HttpResponse(status=403, content="Nie jesteś uprawniony do wykonania tej operacji.")
+    else:
+        return HttpResponse(status=403, content="Nie jesteś uprawniony do wykonania tej operacji.")
+
+
+def accept_application(request, application_id):
+    current_driver = Driver.get_driver_by_user_profile(request.user)
+    if current_driver.is_employed:
+        if current_driver.company and current_driver.job_title == "owner":
+            application = EmployeeApplication.get_application_by_id(application_id)
+            if application:
+                application.accept_application()
+                return redirect("/Company/Applications")
+            else:
+                return HttpResponse(status=401, content="Nie znaleziono aplikacji o takim id.")
+        else:
+            return HttpResponse(status=403, content="Nie jesteś uprawniony do wykonania tej operacji.")
+    else:
+        return HttpResponse(status=403, content="Nie jesteś uprawniony do wykonania tej operacji.")
+
+
+def reject_application(request, application_id):
+    current_driver = Driver.get_driver_by_user_profile(request.user)
+    if current_driver.is_employed:
+        if current_driver.company and current_driver.job_title == "owner":
+            application = EmployeeApplication.get_application_by_id(application_id)
+            if application:
+                application.reject_application()
+                return redirect("/Company/Applications")
+            else:
+                return HttpResponse(status=401, content="Nie znaleziono aplikacji o takim id.")
+        else:
+            return HttpResponse(status=403, content="Nie jesteś uprawniony do wykonania tej operacji.")
+    else:
+        return HttpResponse(status=403, content="Nie jesteś uprawniony do wykonania tej operacji.")

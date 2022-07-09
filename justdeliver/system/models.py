@@ -844,6 +844,40 @@ class EmployeeApplication(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     status = models.CharField(max_length=16, choices=APPLICATION_STATUS, default="Wysłana")
 
+    def decode_dlc(self):
+        dlc_list = []
+        for dlc in self.dlc.split(","):
+            dlc_list.append(dlc)
+        return dlc_list
+
+    def accept_application(self):
+        if self.status == "Wysłane":
+            self.status = "Zaakceptowane"
+            self.save()
+            Employee.create_employee(
+                self.driver,
+                self.company,
+                "Kierowca"
+            )
+            return {"message": "Podanie zostało zaakceptowane. Kierowca został poprawnie dodany do firmy."}
+        else:
+            return {"error": "Podanie zostało już rozpatrzone."}
+
+    def reject_application(self):
+        if self.status == "Wysłane":
+            self.status = "Odrzucone"
+            self.save()
+            return {"message": "Podanie zostało odrzucone."}
+        else:
+            return {"error": "Podanie zostało już rozpatrzone."}
+
+    @staticmethod
+    def get_application_by_id(application_id):
+        try:
+            application = EmployeeApplication.objects.get(id=application_id)
+            return application
+        except EmployeeApplication.DoesNotExist:
+            return None
 
     @staticmethod
     def get_all_company_applications(company: Company):

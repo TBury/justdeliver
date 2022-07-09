@@ -38,4 +38,7 @@ urlpatterns = [
     path('Company/Preferences', views.company_preferences),
     path('Company/DeleteCompany', views.delete_company),
     path('Company/Applications', views.show_company_applications),
+    path('Company/Applications/<int:application_id>', views.check_application),
+    path('Company/Applications/<int:application_id>/AcceptApplication', views.accept_application),
+    path('Company/Applications/<int:application_id>/RejectApplication', views.reject_application),
 ]
