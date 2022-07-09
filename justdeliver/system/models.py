@@ -226,6 +226,10 @@ class Company(models.Model):
         except ValueError:
             return {"error": "Brak firm, które można byłoby wyświetlić."}
 
+    def delete_company(self):
+        self.delete()
+        return {"message": "Firma została poprawnie usunięta."}
+
     def __str__(self):
         return self.name
 
@@ -827,8 +831,24 @@ class VehicleBorrow(models.Model):
 
 
 class EmployeeApplication(models.Model):
+    APPLICATION_STATUS = (
+        ('Zaakceptowane', 'accepted'),
+        ('Odrzucone', 'rejected'),
+        ('Wysłane', 'sent')
+    )
     driver = models.ForeignKey(Driver, on_delete=models.CASCADE)
     company = models.ForeignKey(Company, on_delete=models.CASCADE)
     dlc = models.CharField(max_length=512, default="", blank=True)
     social_media_url = models.URLField(default="")
     reason = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    status = models.CharField(max_length=16, choices=APPLICATION_STATUS, default="Wysłana")
+
+
+    @staticmethod
+    def get_all_company_applications(company: Company):
+        try:
+            applications = EmployeeApplication.objects.filter(company=company)
+            return applications
+        except EmployeeApplication.DoesNotExist:
+            return None

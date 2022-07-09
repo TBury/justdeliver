@@ -648,3 +648,61 @@ def show_company_dispositions(request):
         "has_speditor_permissions": driver.has_speditor_permissions,
     }
     return render(request, "company_dispositions.html", context)
+
+def company_preferences(request):
+    current_driver = Driver.get_driver_by_user_profile(request.user)
+    if current_driver.is_employed:
+        if current_driver.company and current_driver.job_title == "owner":
+            if request.POST:
+                form = EditCompanyForm(request.POST, instance=current_driver.company)
+                if form.is_valid():
+                    form.save()
+            else:
+                form = EditCompanyForm(instance=current_driver.company)
+                context = {
+                    'form': form,
+                    'company_preferences': "option--active",
+                    'is_employed': current_driver.is_employed,
+                    "has_speditor_permissions": current_driver.has_speditor_permissions,
+                }
+                return render(request, "company_settings.html", context)
+        else:
+            return HttpResponse(status=403, content="Nie jesteś uprawniony do wykonania tej operacji.")
+    else:
+        return HttpResponse(status=403, content="Nie jesteś uprawniony do wykonania tej operacji.")
+
+def delete_company(request):
+    current_driver = Driver.get_driver_by_user_profile(request.user)
+    if current_driver.is_employed:
+        if current_driver.company and current_driver.job_title == "owner":
+            current_driver.company.delete_company()
+            return redirect("/dashboard")
+        else:
+            return HttpResponse(status=403, content="Nie jesteś uprawniony do wykonania tej operacji.")
+    else:
+        return HttpResponse(status=403, content="Nie jesteś uprawniony do wykonania tej operacji.")
+
+def show_company_applications(request):
+    current_driver = Driver.get_driver_by_user_profile(request.user)
+    if current_driver.is_employed:
+        if current_driver.company and current_driver.job_title == "owner":
+            applications_list = EmployeeApplication.get_all_company_applications(current_driver.company)
+            paginator = Paginator(applications_list, 10)
+            page = request.GET.get('page')
+            try:
+                applications = paginator.page(page)
+            except PageNotAnInteger:
+                applications = paginator.page(1)
+            except EmptyPage:
+                applications = paginator.page(paginator.num_pages)
+            context = {
+                'applications': applications,
+                'company_applications': "option--active",
+                'is_employed': current_driver.is_employed,
+                "has_speditor_permissions": current_driver.has_speditor_permissions,
+            }
+            return render(request, "company_applications.html", context)
+        else:
+            return HttpResponse(status=403, content="Nie jesteś uprawniony do wykonania tej operacji.")
+    else:
+        return HttpResponse(status=403, content="Nie jesteś uprawniony do wykonania tej operacji.")

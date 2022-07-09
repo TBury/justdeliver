@@ -35,4 +35,7 @@ urlpatterns = [
     path('Company/Vehicles', views.show_company_vehicles),
     path('Company/Vehicles/AddNewVehicle', views.add_new_vehicle),
     path('Company/Dispositions', views.show_company_dispositions),
+    path('Company/Preferences', views.company_preferences),
+    path('Company/DeleteCompany', views.delete_company),
+    path('Company/Applications', views.show_company_applications),
 ]

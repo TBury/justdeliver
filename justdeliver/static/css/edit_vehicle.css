@@ -265,9 +265,6 @@ select {
   background-color: white;
   border: 1px solid #C51616;
   color: #C51616;
-}
-
-#driver--dismiss {
   cursor: pointer;
   border-radius: 5px;
   width: 200px;
