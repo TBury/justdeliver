@@ -473,6 +473,14 @@ class Delivery(models.Model):
         return deliveries[:5]
 
     @staticmethod
+    def get_all_driver_deliveries(driver: Driver):
+        try:
+            deliveries = Delivery.objects.filter(driver=driver)
+            return deliveries
+        except Delivery.DoesNotExist:
+            return None
+
+    @staticmethod
     def get_all_company_deliveries(driver: Driver, company: Company):
         if driver.company == company:
             try:
