@@ -1,6 +1,8 @@
 import json
 from django.shortcuts import render, redirect
 from django.core import serializers
+from django.contrib import messages
+from django.contrib.messages import get_messages
 from django.http import HttpResponse, JsonResponse
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from .models import Driver, Disposition, DeliveryScreenshot, Delivery, Vehicle, Offer, Company, Employee
@@ -57,7 +59,8 @@ def add_delivery_details(request):
                     delivery.driver = driver
                     form.save()
                     del request.session["delivery_key"]
-                return redirect("/dashboard")
+                    messages.success(request, "Dostawa została wysłana poprawnie i oczekuje na zatwierdzenie przez spedycję.")
+                    return redirect("/dashboard")
             else:
                 disposition = Disposition.get_disposition_from_waybill(
                     driver=driver,
@@ -110,7 +113,7 @@ def generate_disposition(request):
     if driver.is_employed and driver.job_title == "owner" or driver.job_title == "speditor":
         if request.POST:
             if Disposition.generate_disposition(request.POST.get("driver"), request.POST):
-                print(request.POST)
+                messages.success(request, "Dyspozycja została wygenerowana poprawnie.")
                 return redirect("/Company/Dispositions")
             else:
                 return HttpResponse(status=403, content="Błąd generowania dyspozycji.")
@@ -132,6 +135,7 @@ def accept_disposition(request, disposition_id):
     driver = Driver.get_driver_by_user_profile(request.user)
     try:
         Disposition.accept_disposition(driver, disposition_id)
+        messages.success(request, "Dyspozycja została przyjęta do realizacji. Wykonaj zlecenie o danych z dyspozycji, aby ją zrealizować.")
         return redirect("/dispositions")
     except Disposition.DoesNotExist:
         return HttpResponse(status=403, content="Dyspozycja nie istnieje.")
@@ -142,6 +146,7 @@ def delete_disposition(request, disposition_id):
     if not driver.is_employed or (driver.is_employed and driver.job_title == "owner" or driver.job_title == "speditor"):
         try:
             Disposition.delete_disposition(driver, disposition_id)
+            messages.success(request, "Dyspozycja została usunięta poprawnie.")
             return redirect("/dispositions")
         except Disposition.DoesNotExist:
             return HttpResponse(status=403, content="Dyspozycja nie istnieje.")
@@ -153,6 +158,7 @@ def cancel_disposition(request, disposition_id):
     driver = Driver.get_driver_by_user_profile(request.user)
     try:
         Disposition.cancel_disposition(driver, disposition_id)
+        messages.success(request, "Dyspozycja została anulowana poprawnie.")
         return redirect("/dispositions")
     except Disposition.DoesNotExist:
         return HttpResponse(status=403, content="Dyspozycja nie istnieje.")
@@ -188,9 +194,11 @@ def add_new_vehicle(request):
                 vehicle.company_owner = driver.company
                 vehicle.photo = request.FILES.get("photo")
                 vehicle.save()
+                messages.success(request, "Pojazd został dodany poprawnie.")
                 return redirect("/Company/Vehicles")
             else:
-                return HttpResponse(status=500, content=form.errors.as_json())
+                messages.error(request, "Pojazd nie został dodany poprawnie. Powód: " + form.errors.as_json())
+                return redirect("/Company/Vehicles")
         else:
             context = {
                 'form': NewVehicleForm(),
@@ -219,9 +227,11 @@ def edit_vehicle(request, vehicle_id):
                         new_driver = Employee.get_employee_by_id(int(request.POST.get("owner")))
                         vehicle.driver_owner = new_driver
                     edited_vehicle.save()
+                    messages.success(request, "Pojazd został edytowany poprawnie.")
                     return redirect("/Company/Vehicles")
                 else:
-                    print(form.errors)
+                    messages.error(request, f"Pojazd nie został edytowany poprawnie. Powód: {form.errors}")
+                    return redirect("/Company/Vehicles")
             else:
                 employees = driver.company.drivers_list
                 context = {
@@ -284,6 +294,7 @@ def accept_offer(request, offer_id):
         if offer:
             result = offer.accept_offer(driver)
             if result.get("message"):
+                messages.success(request, "Oferta została zaakceptowana poprawnie.")
                 return redirect("/dispositions")
             else:
                 return HttpResponse(status=403, content=result.get("error"))
@@ -301,6 +312,7 @@ def create_company(request):
             if form.is_valid():
                 company = form.save()
                 Employee.create_employee(driver, company, "owner")
+                messages.success(request, f"Firma {company.name} została zarejestrowana. Powodzenia na wirtualnych szlakach!")
                 return redirect("/dashboard")
             else:
                 return HttpResponse(content=form.errors)
@@ -363,9 +375,11 @@ def employee_application(request, company_id):
                 company = Company.get_company_by_id(company_id)
                 application.company = company
                 application.save()
+                messages.success(request, f"Aplikacja do firmy {company.name} została złożona poprawnie.")
                 return redirect("/dashboard")
             else:
-                return HttpResponse(content=form.errors)
+                messages.success(request, f"Aplikacja nie została złożona poprawnie. Powód: {form.errors}")
+                return redirect("/dashboard")
         else:
             context = {
                 'form': NewApplicationForm(),
@@ -449,6 +463,7 @@ def edit_delivery_details(request, delivery_id):
                 if form.is_valid():
                     delivery.status = "Wysłana"
                     form.save()
+                    messages.success(request, "Dostawa została edytowana poprawnie i oczekuje na zatwierdzenie przez spedycję.")
                 return redirect("/Deliveries")
             else:
                 disposition = Disposition.get_disposition_from_waybill(
@@ -523,6 +538,7 @@ def edit_delivery_status(request):
                         status = body.get("status")
                         message = delivery.update_status(status)
                         if not message.get("error"):
+                            messages.success(request, "Dostawa rozpatrzona przez spedycję poprawnie.")
                             return HttpResponse(status=200, content=message.get("message"))
                         else:
                             return HttpResponse(status=400, content="Błędny status dostawy.")
@@ -600,6 +616,7 @@ def edit_driver_profile(request, employee_id):
                 form = EditEmployeeForm(request.POST, instance=employee)
                 if form.is_valid():
                     form.save()
+                    messages.success(request, "Profil kierowcy został edytowany poprawnie.")
                     return redirect("/Company/ManageDrivers")
                 else:
                     return HttpResponse(content=form.errors)
@@ -627,6 +644,7 @@ def dismiss_driver(request, employee_id):
     if current_driver.is_employed:
         if current_driver.company and current_driver.job_title == "owner" and current_driver.company == employee.company:
             employee.dismiss_employee()
+            messages.success(request, f"Kierowca został zwolniony poprawnie.")
             return redirect("/Company/ManageDrivers")
         else:
             return HttpResponse(status=403, content="Nie jesteś uprawniony do wykonania tej operacji.")
@@ -642,9 +660,8 @@ def hire_driver(request):
                 form = AddEmployeeForm(request.POST)
                 if form.is_valid():
                     new_employee = form.save(commit=False)
-                    #tutaj wstawić metodę do zapisu wszystkich rzeczy z modelu Employee
-                    #typu dodawanie pojazdu itp
                     new_employee.save()
+                    messages.success(request, f"Kierowca {new_employee.driver.nick} został zatrudniony do firmy.")
                     return redirect("/Company/ManageDrivers")
                 else:
                     return HttpResponse(content=form.errors)
@@ -686,7 +703,7 @@ def find_driver(request, nickname):
 def show_company_vehicles(request):
     driver = Driver.get_driver_by_user_profile(request.user)
     employee = Employee.get_employee_by_driver_account(driver)
-    vehicles = Vehicle.get_company_vehicles(driver.company)
+    vehicles = Vehicle.get_company_vehicles(driver.company, employee)
     current_vehicle = Vehicle.get_vehicle_for_driver(employee=employee)
     context = {
         'current_vehicle': current_vehicle,
@@ -700,12 +717,14 @@ def show_company_vehicles(request):
 def delete_vehicle(request, vehicle_id):
     driver = Driver.get_driver_by_user_profile(request.user)
     if driver.is_employed and driver.job_title == "owner":
-        messages = Vehicle.delete_vehicle(vehicle_id)
-        if messages.get("error"):
+        response = Vehicle.delete_vehicle(vehicle_id)
+        if response.get("error"):
             return HttpResponse(status=401, content="Pojazd nie istnieje.")
-        return redirect("/Company/Vehicles")
+        else:
+            messages.success(request, "Pojazd został usunięty poprawnie.")
+            return redirect("/Company/Vehicles")
     else:
-        return HttpResponse(status=403, content="Nie masz uprawnień do wybierania innego pojazdu.")
+        return HttpResponse(status=403, content="Nie masz uprawnień do usuwania pojazdu.")
 
 def show_company_dispositions(request):
     driver = Driver.get_driver_by_user_profile(request.user)
@@ -735,6 +754,8 @@ def company_preferences(request):
                 form = EditCompanyForm(request.POST, instance=current_driver.company)
                 if form.is_valid():
                     form.save()
+                    messages.success(request, "Ustawienia firmy zostały edytowane poprawnie.")
+                    return redirect("/Company/Preferences")
             else:
                 form = EditCompanyForm(instance=current_driver.company)
                 context = {
@@ -754,6 +775,7 @@ def delete_company(request):
     if current_driver.is_employed:
         if current_driver.company and current_driver.job_title == "owner":
             current_driver.company.delete_company()
+            messages.success(f"Firma została usunięta poprawnie.")
             return redirect("/dashboard")
         else:
             return HttpResponse(status=403, content="Nie jesteś uprawniony do wykonania tej operacji.")
@@ -815,6 +837,7 @@ def accept_application(request, application_id):
             application = EmployeeApplication.get_application_by_id(application_id)
             if application:
                 application.accept_application()
+                messages.success(request, "Podanie zostało zaakceptowane.")
                 return redirect("/Company/Applications")
             else:
                 return HttpResponse(status=401, content="Nie znaleziono aplikacji o takim id.")
@@ -831,6 +854,7 @@ def reject_application(request, application_id):
             application = EmployeeApplication.get_application_by_id(application_id)
             if application:
                 application.reject_application()
+                messages.success(request, "Podanie zostało odrzucone.")
                 return redirect("/Company/Applications")
             else:
                 return HttpResponse(status=401, content="Nie znaleziono aplikacji o takim id.")

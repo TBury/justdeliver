@@ -5,175 +5,198 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="description" content="JustDeliver to najlepszy w Polsce system rozliczeń do ETS2. Prowadź wirtualną spedycję, pokonuj kolejne kilometry i ciesz się jazdą!">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="shortcut icon" href="{% static 'assets/favicon.ico' %}">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
     <link rel="stylesheet" href="{% static 'css/side_panel.css' %}">
+    <link rel="stylesheet" href="{% static 'css/messages.css' %}">
     <title>Panel główny | JustDeliver</title>
 </head>
 <body>
-    {% include "side_panel.html" %}
-    <main class="dashboard">
-        <h1 class="dashboard__welcome-title">
-            Cześć, {{ info.nick }}!
-        </h1>
-        <div class="dashboard__container">
-            <div class="dashboard__statistics-wrapper">
-                <div class="dashboard__card card--statistics-card">
-                    <img class="statistics-card__icon" src="{% static 'icons/distance.png' %}" alt="Niebieska ikona dwóch pinezek do map.">
-                    <div class="statistics-card__content">
-                        <p class="statistics-card__content__label">Przejechany dystans</p>
-                        <p class="statistics-card__content__value">{{ info.statistics.distance.distance__sum|default_if_none:"0" }} km</p>
-                    </div>
-                </div>
-                <div class="dashboard__card card--statistics-card">
-                    <img class="statistics-card__icon" src="{% static 'icons/deliveries.png' %}" alt="Niebieska ikona pinezki umiejscowiona na mapie.">
-                    <div class="statistics-card__content">
-                        <p class="statistics-card__content__label">Ilość wykonanych dostaw</p>
-                        <p class="statistics-card__content__value">{{ info.statistics.deliveries_count|default_if_none:"0" }}
-                            {% if info.statistics.deliveries_count == 1 %} dostawa {% elif info.statistics.deliveries_count > 1 and info.statistics.deliveries_count < 5 %} dostawy {% else %} dostaw {% endif %}</p>
-                    </div>
-                </div>
-                <div class="dashboard__card card--statistics-card">
-                    <img class="statistics-card__icon" src="{% static 'icons/income.png' %}" alt="Niebieska ikona banknotów.">
-                    <div class="statistics-card__content">
-                        <p class="statistics-card__content__label">Łączny dochód</p>
-                        <p class="statistics-card__content__value">{{ info.statistics.income.income__sum|default_if_none:"0" }} zł</p>
-                    </div>
-                </div>
-            </div>
+{% include "side_panel.html" %}
 
-            <div class="dashboard__card card--current-disposition">
-                {% if info.disposition %}
-                <div class="current-disposition__info__wrapper">
-                    <div class="current-disposition__info">
-                        <p class="current-disposition__disposition-number">
-                            Dyspozycja #{{ info.disposition.id }}
-                        </p>
-                        <p class="current-disposition__disposition-deadline">
-                            Przydzielono: {{ info.disposition.created_at | date:"j E, H:i" }}
-                        </p>
-                    </div>
-                    <div class="current-disposition__status status--not-finished">
-                        Nieukończona
-                    </div>
-                </div>
-
-                <div class="current-disposition__cities">
-                    <div class="cities__loading-city-wrapper">
-                        <img class="cities__icon" src="{% static 'icons/loading-city.png' %}" alt="Niebieska ikona pinezki.">
-                        <div class="loading-info">
-                            <p class="loading-city">{{ info.disposition.loading_city }}</p>
-                            <p class="loading-company">{{ info.disposition.loading_spedition }}</p>
-                        </div>
-                    </div>
-                    <div class="cities__unloading-city-wrapper">
-                        <img class="cities__icon" src="{% static 'icons/unloading-city.png' %}" alt="Niebieska ikona flagi finisz.">
-                        <div class="unloading-info">
-                            <p class="unloading-city">{{ info.disposition.unloading_city }}</p>
-                            <p class="unloading-company">{{ info.disposition.unloading_spedition }}</p>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="current-disposition__cargo">
-                    <img class="cargo__icon" src="{% static 'icons/cargo.png' %}" alt="Niebieska ikona paczki.">
-                    <p class="cargo">{{ info.disposition.cargo }} ({{ info.disposition.tonnage }} t)</p>
-                </div>
+<main class="dashboard">
+    {% if messages %}
+    <div class="messages">
+        {% for message in messages %}
+        <div class="alert {{ message.tags }}">
+            <p class="alert__title">
+                {% if message.tags == "success" %}
+                Sukces
+                {% elif message.tags == "error" %}
+                Błąd
                 {% else %}
-                <div class="current-disposition__info__wrapper">
-                    <div class="current-disposition__info">
-                        <p class="current-disposition__no-disposition-header">
-                            Wszystko gotowe!
-                        </p>
-                        <p class="current-disposition__no-disposition-text">
-                            Nie masz żadnej przydzielonej dyspozycji. Wszystkie dyspozycje zostały wykonane.
-                            W tym miejscu pojawi się jakaś, gdy przydzieli ją spedycja.
-                        </p>
-                    </div>
-                </div>
+                Informacja
                 {% endif %}
-
-            </div>
-            {% if info.vehicle %}
-            <div class="dashboard__card card--vehicle">
-                <img class="vehicle__photo" src="{{ info.vehicle.photo.url }}" alt="Zdjęcie pojazdu">
-                <p class="vehicle__label">
-                    Twój pojazd
-                </p>
-                <p class="vehicle__title">{{ info.vehicle.manufacturer }} {{ info.vehicle.model }} {{ info.vehicle.cabin }}</p>
-                <span class="vehicle__license-plate">{{ info.vehicle.license_plate }}</span>
-                <div class="vehicle__details">
-                    <div class="details--engine">
-                        <p class="vehicle__label">Silnik</p>
-                        <p class="engine">{{ info.vehicle.engine }} KM</p>
-                    </div>
-                    <div class="details--chassis">
-                        <p class="vehicle__label">Nadwozie</p>
-                        <p class="chassis">{{ info.vehicle.chassis }}</p>
-                    </div>
-                    <div class="details--odometer">
-                        <p class="vehicle__label">Przebieg</p>
-                        <p class="odometer">{{ info.vehicle.odometer }} km</p>
-                    </div>
+            </p>
+            <p class="alert__description">
+                {{ message }}
+            </p>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+    <h1 class="dashboard__welcome-title">
+        Cześć, {{ info.nick }}!
+    </h1>
+    <div class="dashboard__container">
+        <div class="dashboard__statistics-wrapper">
+            <div class="dashboard__card card--statistics-card">
+                <img class="statistics-card__icon" src="{% static 'icons/distance.png' %}" alt="Niebieska ikona dwóch pinezek do map.">
+                <div class="statistics-card__content">
+                    <p class="statistics-card__content__label">Przejechany dystans</p>
+                    <p class="statistics-card__content__value">{{ info.statistics.distance.distance__sum|default_if_none:"0" }} km</p>
                 </div>
             </div>
-            {% else %}
-            <div class="dashboard__card card--no-vehicle">
-                <p class="no-vehicle">Nie masz kluczyków do żadnego pojazdu.</p>
-                <p class="no-vehicle-text">Poproś swojego spedytora, by przydzielił Ci pojazd. Tylko nie Magnumkę.</p>
+            <div class="dashboard__card card--statistics-card">
+                <img class="statistics-card__icon" src="{% static 'icons/deliveries.png' %}" alt="Niebieska ikona pinezki umiejscowiona na mapie.">
+                <div class="statistics-card__content">
+                    <p class="statistics-card__content__label">Ilość wykonanych dostaw</p>
+                    <p class="statistics-card__content__value">{{ info.statistics.deliveries_count|default_if_none:"0" }}
+                        {% if info.statistics.deliveries_count == 1 %} dostawa {% elif info.statistics.deliveries_count > 1 and info.statistics.deliveries_count < 5 %} dostawy {% else %} dostaw {% endif %}</p>
+                </div>
             </div>
-            {% endif %}
-            <div class="dashboard__card card--deliveries">
-                <p class="recent-deliveries__title">Ostatnie zlecenia</p>
-                <div class="recent-deliveries__header">
-                    <p class="header__title">Miasto załadunku</p>
-                    <p class="header__title">Miasto rozładunku</p>
-                    <p class="header__title">Data</p>
-                    <p class="header__title">Status</p>
+            <div class="dashboard__card card--statistics-card">
+                <img class="statistics-card__icon" src="{% static 'icons/income.png' %}" alt="Niebieska ikona banknotów.">
+                <div class="statistics-card__content">
+                    <p class="statistics-card__content__label">Łączny dochód</p>
+                    <p class="statistics-card__content__value">{{ info.statistics.income.income__sum|default_if_none:"0" }} zł</p>
                 </div>
-                <hr class="recent-deliveries__line">
-                {% for delivery in info.last_deliveries %}
-                <div class="recent-deliveries__delivery">
-                    <div class="delivery__place">
-                        <p class="place__city">{{ delivery.loading_city }}</p>
-                        <p class="place__company">{{ delivery.loading_spedition }}</p>
-                    </div>
-                    <div class="delivery__place">
-                        <p class="place__city">{{ delivery.unloading_city }}</p>
-                        <p class="place__company">{{ delivery.unloading_spedition }}</p>
-                    </div>
-                    <div class="delivery__date">
-                        <p class="date">{{ delivery.created_at|date:"j E, H:i" }}</p>
-                    </div>
-                        {% if delivery.status == "Odrzucona"  %}
-                        <div class="delivery__status">
-                            <span class="status status--rejected">Odrzucona</span>
-                        </div>
-                        {% elif delivery.status == "Wysłana" %}
-                        <div class="delivery__status">
-                            <span class="status status--sent">Wysłana</span>
-                        </div>
-                        {% elif delivery.status == "Do poprawy" %}
-                        <div class="delivery__status">
-                            <span class="status status--to-edit">Do poprawki</span>
-                        </div>
-                        {% elif delivery.status == "Zaakceptowana" %}
-                        <div class="delivery__status">
-                            <span class="status status--accepted">Zaakceptowana</span>
-                        </div>
-                        {% endif %}
-                </div>
-                {% empty %}
-                <p class="no-deliveries">Nie masz ostatnich zleceń.</p>
-                <p class="no-deliveries-text">Trzeba wziąć się do pracy. Po zakończeniu zlecenia wpadnij do nas
-                i wrzuć trasę poprzez Dodaj nową trasę.</p>
-                {% endfor %}
             </div>
         </div>
-    </main>
+
+        <div class="dashboard__card card--current-disposition">
+            {% if info.disposition %}
+            <div class="current-disposition__info__wrapper">
+                <div class="current-disposition__info">
+                    <p class="current-disposition__disposition-number">
+                        Dyspozycja #{{ info.disposition.id }}
+                    </p>
+                    <p class="current-disposition__disposition-deadline">
+                        Przydzielono: {{ info.disposition.created_at | date:"j E, H:i" }}
+                    </p>
+                </div>
+                <div class="current-disposition__status status--not-finished">
+                    Nieukończona
+                </div>
+            </div>
+
+            <div class="current-disposition__cities">
+                <div class="cities__loading-city-wrapper">
+                    <img class="cities__icon" src="{% static 'icons/loading-city.png' %}" alt="Niebieska ikona pinezki.">
+                    <div class="loading-info">
+                        <p class="loading-city">{{ info.disposition.loading_city }}</p>
+                        <p class="loading-company">{{ info.disposition.loading_spedition }}</p>
+                    </div>
+                </div>
+                <div class="cities__unloading-city-wrapper">
+                    <img class="cities__icon" src="{% static 'icons/unloading-city.png' %}" alt="Niebieska ikona flagi finisz.">
+                    <div class="unloading-info">
+                        <p class="unloading-city">{{ info.disposition.unloading_city }}</p>
+                        <p class="unloading-company">{{ info.disposition.unloading_spedition }}</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="current-disposition__cargo">
+                <img class="cargo__icon" src="{% static 'icons/cargo.png' %}" alt="Niebieska ikona paczki.">
+                <p class="cargo">{{ info.disposition.cargo }} ({{ info.disposition.tonnage }} t)</p>
+            </div>
+            {% else %}
+            <div class="current-disposition__info__wrapper">
+                <div class="current-disposition__info">
+                    <p class="current-disposition__no-disposition-header">
+                        Wszystko gotowe!
+                    </p>
+                    <p class="current-disposition__no-disposition-text">
+                        Nie masz żadnej przydzielonej dyspozycji. Wszystkie dyspozycje zostały wykonane.
+                        W tym miejscu pojawi się jakaś, gdy przydzieli ją spedycja.
+                    </p>
+                </div>
+            </div>
+            {% endif %}
+
+        </div>
+        {% if info.vehicle %}
+        <div class="dashboard__card card--vehicle">
+            <img class="vehicle__photo" src="{{ info.vehicle.photo.url }}" alt="Zdjęcie pojazdu">
+            <p class="vehicle__label">
+                Twój pojazd
+            </p>
+            <p class="vehicle__title">{{ info.vehicle.manufacturer }} {{ info.vehicle.model }} {{ info.vehicle.cabin }}</p>
+            <span class="vehicle__license-plate">{{ info.vehicle.license_plate }}</span>
+            <div class="vehicle__details">
+                <div class="details--engine">
+                    <p class="vehicle__label">Silnik</p>
+                    <p class="engine">{{ info.vehicle.engine }} KM</p>
+                </div>
+                <div class="details--chassis">
+                    <p class="vehicle__label">Nadwozie</p>
+                    <p class="chassis">{{ info.vehicle.chassis }}</p>
+                </div>
+                <div class="details--odometer">
+                    <p class="vehicle__label">Przebieg</p>
+                    <p class="odometer">{{ info.vehicle.odometer }} km</p>
+                </div>
+            </div>
+        </div>
+        {% else %}
+        <div class="dashboard__card card--no-vehicle">
+            <p class="no-vehicle">Nie masz kluczyków do żadnego pojazdu.</p>
+            <p class="no-vehicle-text">Poproś swojego spedytora, by przydzielił Ci pojazd. Tylko nie Magnumkę.</p>
+        </div>
+        {% endif %}
+        <div class="dashboard__card card--deliveries">
+            <p class="recent-deliveries__title">Ostatnie zlecenia</p>
+            <div class="recent-deliveries__header">
+                <p class="header__title">Miasto załadunku</p>
+                <p class="header__title">Miasto rozładunku</p>
+                <p class="header__title">Data</p>
+                <p class="header__title">Status</p>
+            </div>
+            <hr class="recent-deliveries__line">
+            {% for delivery in info.last_deliveries %}
+            <div class="recent-deliveries__delivery">
+                <div class="delivery__place">
+                    <p class="place__city">{{ delivery.loading_city }}</p>
+                    <p class="place__company">{{ delivery.loading_spedition }}</p>
+                </div>
+                <div class="delivery__place">
+                    <p class="place__city">{{ delivery.unloading_city }}</p>
+                    <p class="place__company">{{ delivery.unloading_spedition }}</p>
+                </div>
+                <div class="delivery__date">
+                    <p class="date">{{ delivery.created_at|date:"j E, H:i" }}</p>
+                </div>
+                {% if delivery.status == "Odrzucona"  %}
+                <div class="delivery__status">
+                    <span class="status status--rejected">Odrzucona</span>
+                </div>
+                {% elif delivery.status == "Wysłana" %}
+                <div class="delivery__status">
+                    <span class="status status--sent">Wysłana</span>
+                </div>
+                {% elif delivery.status == "Do poprawy" %}
+                <div class="delivery__status">
+                    <span class="status status--to-edit">Do poprawki</span>
+                </div>
+                {% elif delivery.status == "Zaakceptowana" %}
+                <div class="delivery__status">
+                    <span class="status status--accepted">Zaakceptowana</span>
+                </div>
+                {% endif %}
+            </div>
+            {% empty %}
+            <p class="no-deliveries">Nie masz ostatnich zleceń.</p>
+            <p class="no-deliveries-text">Trzeba wziąć się do pracy. Po zakończeniu zlecenia wpadnij do nas
+                i wrzuć trasę poprzez Dodaj nową trasę.</p>
+            {% endfor %}
+        </div>
+    </div>
+</main>
 </body>
+<script src="{% static 'js/messages.js' %}"></script>
 </html>

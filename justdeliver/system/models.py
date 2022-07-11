@@ -475,7 +475,7 @@ class Delivery(models.Model):
     @staticmethod
     def get_all_driver_deliveries(driver: Driver):
         try:
-            deliveries = Delivery.objects.filter(driver=driver)
+            deliveries = Delivery.objects.filter(driver=driver, is_edited=False)
             return deliveries
         except Delivery.DoesNotExist:
             return None

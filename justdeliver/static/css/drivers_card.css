@@ -356,4 +356,19 @@ body {
   background-color: #FFDFB8;
   color: #FF8B00;
 }
+
+.no-deliveries {
+  font-size: 16px;
+  text-align: center;
+  font-weight: bold;
+  margin-left: 16px;
+}
+
+.no-deliveries-text {
+  text-align: center;
+  margin-left: 32px;
+  margin-right: 32px;
+  font-size: 14px;
+  color: #9C9C9C;
+}
 /*# sourceMappingURL=drivers_card.css.map */
