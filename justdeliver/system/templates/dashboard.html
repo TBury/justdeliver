@@ -127,42 +127,45 @@
             </div>
             {% endif %}
             <div class="dashboard__card card--deliveries">
-                <p class="deliveries__label">
-                    Ostatnie zlecenia
-                </p>
-                {% for qs in info.last_deliveries %}
-                    {% for delivery in qs|slice:"0:5" %}
-                    <div class="delivery">
-                    <div class="delivery__container">
-                        <img src="{% static 'icons/waybill.png' %}" alt="Niebieski okrąg z białą ikoną flagi finiszu." class="delivery__icon">
-                        <div class="delivery__details">
-                            <p class="details__cities">
-                                {{ delivery.loading_city }} - {{ delivery.unloading_city }}
-                            </p>
-                            <p class="details__date">
-                                {{ delivery.created_at }}
-                            </p>
-                        </div>
+                <p class="recent-deliveries__title">Ostatnie zlecenia</p>
+                <div class="recent-deliveries__header">
+                    <p class="header__title">Miasto załadunku</p>
+                    <p class="header__title">Miasto rozładunku</p>
+                    <p class="header__title">Data</p>
+                    <p class="header__title">Status</p>
+                </div>
+                <hr class="recent-deliveries__line">
+                {% for delivery in info.last_deliveries %}
+                <div class="recent-deliveries__delivery">
+                    <div class="delivery__place">
+                        <p class="place__city">{{ delivery.loading_city }}</p>
+                        <p class="place__company">{{ delivery.loading_spedition }}</p>
                     </div>
-                    {% if delivery.status == 'rejected' %}
-                        <div class="delivery__status status--rejected">
-                            Odrzucona
+                    <div class="delivery__place">
+                        <p class="place__city">{{ delivery.unloading_city }}</p>
+                        <p class="place__company">{{ delivery.unloading_spedition }}</p>
+                    </div>
+                    <div class="delivery__date">
+                        <p class="date">{{ delivery.created_at|date:"j E, H:i" }}</p>
+                    </div>
+                        {% if delivery.status == "Odrzucona"  %}
+                        <div class="delivery__status">
+                            <span class="status status--rejected">Odrzucona</span>
                         </div>
-                        {% elif delivery.status == 'sent' %}
-                        <div class="delivery__status status--sent">
-                            Wysłana
+                        {% elif delivery.status == "Wysłana" %}
+                        <div class="delivery__status">
+                            <span class="status status--sent">Wysłana</span>
                         </div>
-                        {% elif delivery.status == 'edit' %}
-                        <div class="delivery__status status--to-edit">
-                            Do poprawki
+                        {% elif delivery.status == "Do poprawy" %}
+                        <div class="delivery__status">
+                            <span class="status status--to-edit">Do poprawki</span>
                         </div>
-                        {% elif delivery.status == 'accepted' %}
-                        <div class="delivery__status status--accepted">
-                            Zaakceptowana
+                        {% elif delivery.status == "Zaakceptowana" %}
+                        <div class="delivery__status">
+                            <span class="status status--accepted">Zaakceptowana</span>
                         </div>
                         {% endif %}
                 </div>
-                    {% endfor %}
                 {% empty %}
                 <p class="no-deliveries">Nie masz ostatnich zleceń.</p>
                 <p class="no-deliveries-text">Trzeba wziąć się do pracy. Po zakończeniu zlecenia wpadnij do nas

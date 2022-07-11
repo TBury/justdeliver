@@ -187,25 +187,9 @@ body {
   margin-top: 0;
 }
 
-.status--not-finished,
-.status--rejected {
+.status--not-finished {
   background-color: #FFD2D2;
   color: #C51616;
-}
-
-.status--sent {
-  background-color: #B8DCFF;
-  color: #0071DC;
-}
-
-.status--to-edit {
-  background-color: #FFDFB8;
-  color: #FF8B00;
-}
-
-.status--accepted {
-  background-color: #BFF9CF;
-  color: #00AC3A;
 }
 
 .current-disposition__cities {
@@ -371,13 +355,6 @@ body {
   font-weight: 700;
 }
 
-.card--deliveries {
-  margin-top: -150px;
-  margin-left: 48px;
-  width: 500px;
-  padding-bottom: 20px;
-}
-
 .deliveries__label {
   font-size: 12px;
   color: #9C9C9C;
@@ -454,5 +431,120 @@ body {
   margin-right: 32px;
   font-size: 14px;
   color: #9C9C9C;
+}
+
+.card--deliveries {
+  border-top: 5px solid #0071DC;
+  background-color: white;
+  -webkit-filter: drop-shadow(0px 3px 3px rgba(0, 0, 0, 0.25));
+          filter: drop-shadow(0px 3px 3px rgba(0, 0, 0, 0.25));
+  margin: 64px -15px -35px 0;
+  padding-bottom: 36px;
+  max-height: 420px;
+  margin-top: -150px;
+  margin-left: 48px;
+  width: 500px;
+  padding-bottom: 20px;
+}
+
+.recent-deliveries__title {
+  font-weight: 700;
+  font-size: 14px;
+  margin-left: 16px;
+}
+
+.recent-deliveries__header,
+.recent-deliveries__delivery {
+  margin-left: 16px;
+  display: -ms-grid;
+  display: grid;
+  -ms-grid-columns: (25%)[4];
+      grid-template-columns: repeat(4, 25%);
+}
+
+.recent-deliveries__header {
+  font-size: 10px;
+  color: #9c9c9c;
+}
+
+.header__title {
+  margin-bottom: 0;
+}
+
+.recent-deliveries__line {
+  background-color: #D8D8D8;
+  height: 1px;
+  margin-left: 16px;
+  margin-right: 16px;
+  border: 0;
+}
+
+.recent-deliveries__delivery {
+  margin-top: 20px;
+  margin-bottom: 30px;
+}
+
+.delivery__place {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+}
+
+.place__city {
+  margin-top: 0;
+  font-size: 12px;
+  margin-bottom: 0;
+}
+
+.place__company {
+  margin-top: 2px;
+  margin-bottom: 0;
+  font-size: 10px;
+  color: #9C9C9C;
+}
+
+.date {
+  margin-top: 0;
+  font-size: 12px;
+}
+
+.status {
+  display: block;
+  text-align: center;
+  font-size: 11px;
+  font-weight: 700;
+  border-radius: 5px;
+  height: 16px;
+  width: 90px;
+  padding: 5px 10px 5px 10px;
+}
+
+.status--accepted {
+  background-color: #BFF9CF;
+  color: #00AC3A;
+}
+
+.status--rejected {
+  background-color: #FFD2D2;
+  color: #C51616;
+}
+
+.status--sent {
+  background-color: #B8DCFF;
+  color: #0071DC;
+}
+
+.status--to-edit {
+  background-color: #FFDFB8;
+  color: #FF8B00;
+}
+
+.vehicle__photo {
+  width: 480px;
+  height: 200px;
 }
 /*# sourceMappingURL=dashboard.css.map */

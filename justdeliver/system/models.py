@@ -454,19 +454,23 @@ class Delivery(models.Model):
     @staticmethod
     def get_last_deliveries_for_driver(driver: Driver):
         deliveries = []
-        accepted = Delivery.objects.filter(driver=driver, status='Zaakceptowana', is_edited=False).order_by("-created_at")
-        sent = Delivery.objects.filter(driver=driver, status='Wysłana', is_edited=False).order_by("-created_at")
-        to_edit = Delivery.objects.filter(driver=driver, status='Do poprawy', is_edited=False).order_by("-created_at")
-        rejected = Delivery.objects.filter(driver=driver, status='Odrzucona', is_edited=False).order_by("-created_at")
+        accepted = Delivery.objects.filter(driver=driver, status='Zaakceptowana', is_edited=False).order_by("-created_at")[:9]
+        sent = Delivery.objects.filter(driver=driver, status='Wysłana', is_edited=False).order_by("-created_at")[:9]
+        to_edit = Delivery.objects.filter(driver=driver, status='Do poprawy', is_edited=False).order_by("-created_at")[:9]
+        rejected = Delivery.objects.filter(driver=driver, status='Odrzucona', is_edited=False).order_by("-created_at")[:9]
         if rejected:
-            deliveries.append(rejected)
+            for delivery in rejected:
+                deliveries.append(delivery)
         if to_edit:
-            deliveries.append(to_edit)
+            for delivery in to_edit:
+                deliveries.append(delivery)
         if sent:
-            deliveries.append(sent)
+            for delivery in sent:
+                deliveries.append(delivery)
         if accepted:
-            deliveries.append(accepted)
-        return deliveries
+            for delivery in accepted:
+                deliveries.append(delivery)
+        return deliveries[:5]
 
     @staticmethod
     def get_all_company_deliveries(driver: Driver, company: Company):
