@@ -160,8 +160,14 @@ def cancel_disposition(request, disposition_id):
 
 def show_vehicles(request):
     driver = Driver.get_driver_by_user_profile(request.user)
-    current_vehicle = Vehicle.get_vehicle_for_driver(driver=driver)
-    vehicles = Vehicle.get_driver_vehicles(driver)
+    if driver.is_employed:
+        employee = Employee.get_employee_by_driver_account(driver=driver)
+        current_vehicle = Vehicle.get_vehicle_for_driver(employee=employee)
+        if driver.has_speditor_permissions:
+            vehicles = Vehicle.get_company_vehicles(company=employee.company, employee=employee)
+    else:
+        current_vehicle = Vehicle.get_vehicle_for_driver(driver=driver)
+        vehicles = Vehicle.get_driver_vehicles(driver=driver)
     context = {
         'current_vehicle': current_vehicle,
         'vehicles': vehicles,
@@ -235,8 +241,14 @@ def edit_vehicle(request, vehicle_id):
 
 def select_vehicle(request, vehicle_id):
     driver = Driver.get_driver_by_user_profile(request.user)
-    if not driver.is_employed or (driver.is_employed and driver.job_title == "owner" or driver.job_title == "speditor"):
+    if not driver.is_employed:
         messages = Vehicle.change_selected_vehicle(driver, vehicle_id)
+        if messages.get("error"):
+            return HttpResponse(status=403, content="Pojazd nie istnieje.")
+        return redirect("/vehicles")
+    elif driver.is_employed and (driver.job_title == "owner" or driver.job_title == "speditor"):
+        employee = Employee.get_employee_by_driver_account(driver)
+        messages = Vehicle.change_selected_vehicle(employee=employee, vehicle_id=vehicle_id)
         if messages.get("error"):
             return HttpResponse(status=403, content="Pojazd nie istnieje.")
         return redirect("/vehicles")
@@ -288,7 +300,7 @@ def create_company(request):
             form = CreateCompanyForm(request.POST)
             if form.is_valid():
                 company = form.save()
-                Employee.create_employee(driver, company, "Właściciel")
+                Employee.create_employee(driver, company, "owner")
                 return redirect("/dashboard")
             else:
                 return HttpResponse(content=form.errors)

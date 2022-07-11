@@ -342,15 +342,23 @@ class Vehicle(models.Model):
     @staticmethod
     def get_driver_vehicles(driver: Driver):
         try:
-            vehicle = Vehicle.objects.filter(driver=None, driver_owner=driver)
+            vehicle = Vehicle.objects.filter(driver=driver)
             return vehicle
         except Vehicle.DoesNotExist:
             return None
 
     @staticmethod
-    def get_company_vehicles(company: Company):
+    def get_employee_vehicles(employee: Employee):
         try:
-            vehicles = Vehicle.objects.filter(company_owner=company)
+            vehicle = Vehicle.objects.filter(driver_owner=driver, company_owner=employee.company)
+            return vehicle
+        except Vehicle.DoesNotExist:
+            return None
+
+    @staticmethod
+    def get_company_vehicles(company: Company, employee: Employee):
+        try:
+            vehicles = Vehicle.objects.filter(company_owner=company).exclude(driver_owner=employee)
             return vehicles
         except Vehicle.DoesNotExist:
             return None
@@ -364,10 +372,15 @@ class Vehicle(models.Model):
             return None
 
     @staticmethod
-    def change_selected_vehicle(driver: Driver, vehicle_id: int):
+    def change_selected_vehicle(driver=None, employee=None, vehicle_id=0):
         try:
-            current_vehicle = Vehicle.objects.filter(driver_owner=driver, driver=driver).update(driver=None)
-            new_selected_vehicle = Vehicle.objects.filter(driver_owner=driver, id=vehicle_id).update(driver=driver)
+            if driver:
+                current_vehicle = Vehicle.objects.filter(driver=driver).update(driver=None)
+                new_selected_vehicle = Vehicle.objects.filter(id=vehicle_id).update(driver=driver)
+            elif employee:
+                if employee.job_title == "owner" or employee.job_title == "speditor":
+                    current_vehicle = Vehicle.objects.filter(driver_owner=employee, company_owner=employee.company).update(driver_owner=None)
+                    new_selected_vehicle = Vehicle.objects.filter(id=vehicle_id).update(driver_owner=employee)
             return {"message": "Pojazd zaktualizowany poprawnie."}
         except Vehicle.DoesNotExist:
             return {"error": "Pojazd nie istnieje."}
