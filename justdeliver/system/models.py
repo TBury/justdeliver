@@ -485,7 +485,7 @@ class DeliveryScreenshot(models.Model):
         if len(screenshots) == 1:
             DeliveryScreenshot.objects.create(
                 delivery=delivery,
-                screenshot=screenshots.get("file"),
+                screenshot=screenshots.get("file[0]"),
             )
         elif len(screenshots) > 1:
             for i in range(len(screenshots)):
