@@ -33,7 +33,8 @@
                     <img class="statistics-card__icon" src="{% static 'icons/deliveries.png' %}" alt="Niebieska ikona pinezki umiejscowiona na mapie.">
                     <div class="statistics-card__content">
                         <p class="statistics-card__content__label">Ilość wykonanych dostaw</p>
-                        <p class="statistics-card__content__value">{{ info.statistics.deliveries_count|default_if_none:"0" }} dostawy</p>
+                        <p class="statistics-card__content__value">{{ info.statistics.deliveries_count|default_if_none:"0" }}
+                            {% if info.statistics.deliveries_count == 1 %} dostawa {% elif info.statistics.deliveries_count > 1 and info.statistics.deliveries_count < 5 %} dostawy {% else %} dostaw {% endif %}</p>
                     </div>
                 </div>
                 <div class="dashboard__card card--statistics-card">
