@@ -426,6 +426,7 @@ class Delivery(models.Model):
     income = models.PositiveIntegerField(default=0)
     damage = models.PositiveSmallIntegerField(default=0)
     status = models.CharField(max_length=16, choices=DELIVERY_STATUS, default="Wysłana")
+    reason = models.CharField(max_length=2048, blank=True)
     is_edited = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
     accepted_at = models.DateTimeField(null=True, blank=True)
@@ -437,9 +438,11 @@ class Delivery(models.Model):
         except DeliveryScreenshot.DoesNotExist:
             return None
 
-    def update_status(self, status):
+    def update_status(self, status: str, reason: str):
         if status in dict(Delivery.DELIVERY_STATUS).keys():
             self.status = status
+            if reason:
+                self.reason = reason
             self.save()
             return {"message": "Status zaktualizowany poprawnie."}
         else:

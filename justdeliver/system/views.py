@@ -535,7 +535,8 @@ def edit_delivery_status(request):
                     delivery = Delivery.get_delivery_by_id(delivery_id)
                     if delivery.driver.company == driver.company and delivery.driver != driver:
                         status = body.get("status")
-                        message = delivery.update_status(status)
+                        reason = body.get("reason")
+                        message = delivery.update_status(status, reason)
                         if not message.get("error"):
                             messages.success(request, "Dostawa rozpatrzona przez spedycję poprawnie.")
                             return HttpResponse(status=200, content=message.get("message"))
