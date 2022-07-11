@@ -116,6 +116,16 @@ class Driver(models.Model):
         drivers = [{"nick": driver.nick, "avatar": driver.avatar.url, "id": driver.id} for driver in all_drivers if not driver.is_employed]
         return drivers
 
+    @staticmethod
+    def get_driver_by_id(driver_id: int):
+        try:
+            print(driver_id)
+            driver = Driver.objects.get(id=driver_id)
+            print(driver)
+            return driver
+        except Driver.DoesNotExist:
+            return None
+
     def __str__(self):
         return self.nick
 
@@ -799,8 +809,8 @@ class Disposition(models.Model):
             loading_spedition = loading_spedition,
             unloading_city = unloading_city.get("realName"),
             unloading_spedition = unloading_spedition,
-            cargo = "test",
-            tonnage = "22",
+            cargo = "Dowolny",
+            tonnage = "12",
             deadline = data.get("deadline")
         )
         return True
@@ -843,6 +853,14 @@ class Disposition(models.Model):
                                                   loading_city=loading_city,
                                                   unloading_city=unloading_city,
                                                   cargo=cargo)
+            return disposition
+        except Disposition.DoesNotExist:
+            return None
+
+    @staticmethod
+    def get_disposition_by_id(disposition_id: int):
+        try:
+            disposition = Disposition.objects.get(id=disposition_id)
             return disposition
         except Disposition.DoesNotExist:
             return None

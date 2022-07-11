@@ -218,7 +218,6 @@ def edit_vehicle(request, vehicle_id):
         if vehicle:
             if request.method == "POST":
                 form = EditVehicleForm(request.POST, instance=vehicle)
-                print(request.POST)
                 if form.is_valid():
                     edited_vehicle = form.save(commit=False)
                     if request.FILES.get("photo"):
@@ -858,6 +857,43 @@ def reject_application(request, application_id):
                 return redirect("/Company/Applications")
             else:
                 return HttpResponse(status=401, content="Nie znaleziono aplikacji o takim id.")
+        else:
+            return HttpResponse(status=403, content="Nie jesteś uprawniony do wykonania tej operacji.")
+    else:
+        return HttpResponse(status=403, content="Nie jesteś uprawniony do wykonania tej operacji.")
+
+
+def manage_disposition(request, disposition_id):
+    current_driver = Driver.get_driver_by_user_profile(request.user)
+    if current_driver.is_employed:
+        if current_driver.company and (current_driver.job_title == "owner" or current_driver.job_title == "speditor"):
+            disposition = Disposition.get_disposition_by_id(disposition_id)
+            if request.method == "POST" and request.POST:
+                form = EditDispositionForm(request.POST, instance=disposition)
+                if form.is_valid():
+                    edited_disposition = form.save(commit=False)
+                    if request.POST.get("driver"):
+                        employee_id = int(request.POST.get("driver"))
+                        driver = Employee.get_employee_by_id(employee_id).driver
+                        edited_disposition.driver = driver
+                    if request.POST.get("deadline"):
+                        edited_disposition.deadline = request.POST.get("deadline")
+                    edited_disposition.save()
+                    messages.success(request, "Dyspozycja została edytowana poprawnie.")
+                    return redirect("/Company/Dispositions")
+                else:
+                    return HttpResponse(content=form.errors)
+            else:
+                form = EditDispositionForm(instance=disposition)
+                employees = Employee.get_all_company_employees(current_driver.company)
+                context = {
+                    "company_dispositions_tag": "option--active",
+                    'employees': employees,
+                    "is_employed": current_driver.is_employed,
+                    "has_speditor_permissions": current_driver.has_speditor_permissions,
+                    "form": form,
+                }
+                return render(request, "manage_disposition.html", context)
         else:
             return HttpResponse(status=403, content="Nie jesteś uprawniony do wykonania tej operacji.")
     else:
