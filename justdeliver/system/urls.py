@@ -2,6 +2,7 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
+    path('', views.home),
     path('dashboard/', views.dashboard),
     path('Deliveries/select-delivery-method/', views.select_delivery_adding_mode),
     path('api/Delivery/send-screenshots', views.upload_screenshots, name="upload_screenshots"),

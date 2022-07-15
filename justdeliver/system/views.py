@@ -8,6 +8,9 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from .models import Driver, Disposition, DeliveryScreenshot, Delivery, Vehicle, Offer, Company, Employee
 from .forms import *
 
+def home(request):
+    return render(request, "home.html")
+
 
 def dashboard(request):
     driver = Driver.get_driver_by_user_profile(request.user)
