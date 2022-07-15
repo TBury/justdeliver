@@ -18,7 +18,8 @@ from huey.contrib import djhuey as huey
 class Driver(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     nick = models.CharField(max_length=128)
-    avatar = models.ImageField(upload_to='avatars')
+    avatar = models.ImageField(upload_to='avatars', null=True, blank=True)
+    email_confirmed = models.BooleanField(default=False)
 
     @property
     def is_employed(self):

@@ -1,10 +1,16 @@
 from django.urls import path
 from . import views
+from django.contrib.auth.views import LoginView
 
 urlpatterns = [
     path('', views.home),
-    path('dashboard/', views.dashboard),
+    path('Register', views.register),
+    path('login', LoginView.as_view(template_name="login.html"), name='login'),
+    path('dashboard/', views.dashboard, name='dashboard'),
     path('Deliveries/select-delivery-method/', views.select_delivery_adding_mode),
+    path('ActivationSent', views.account_activation_sent, name='account_activation_sent'),
+    path(r'activate/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})',
+        views.activate, name='activate'),
     path('api/Delivery/send-screenshots', views.upload_screenshots, name="upload_screenshots"),
     path('Deliveries/add-delivery-details', views.add_delivery_details),
     path('drivers-card/', views.drivers_card),
