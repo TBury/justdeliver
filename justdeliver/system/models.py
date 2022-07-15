@@ -49,7 +49,7 @@ class Driver(models.Model):
 
     @property
     def distance(self):
-        distance = Delivery.objects.filter(driver=self, is_edited=False, status="Zaakceptowana").aggregate(Sum('distance'))
+        distance = Delivery.get_driver_distance(self)
         return distance
 
     @property
@@ -149,8 +149,7 @@ class Company(models.Model):
         employees = self.drivers_list
         distance = 0
         for employee in employees:
-            distance += Delivery.objects.filter(driver=employee.driver, is_edited=False, status="Zaakceptowana").aggregate(
-                Sum('distance')).get("distance__sum")
+            distance += Delivery.get_driver_distance(employee.driver)
         return distance
 
     @property
@@ -158,8 +157,10 @@ class Company(models.Model):
         employees = self.drivers_list
         tonnage = 0
         for employee in employees:
-            tonnage += Delivery.objects.filter(driver=employee.driver, is_edited=False, status="Zaakceptowana").aggregate(
+            employee_tonnage = Delivery.objects.filter(driver=employee.driver, is_edited=False, status="Zaakceptowana").aggregate(
                 Sum('tonnage')).get("tonnage__sum")
+            if employee_tonnage:
+                tonnage += employee_tonnage
         return tonnage
 
     @property
@@ -167,7 +168,9 @@ class Company(models.Model):
         employees = self.drivers_list
         deliveries_count = 0
         for employee in employees:
-            deliveries_count += Delivery.objects.filter(driver=employee.driver, is_edited=False, status="Zaakceptowana").count()
+            employee_deliveries_count = Delivery.objects.filter(driver=employee.driver, is_edited=False, status="Zaakceptowana").count()
+            if employee_deliveries_count:
+                deliveries_count += employee_deliveries_count
         return deliveries_count
 
     @property
@@ -175,8 +178,10 @@ class Company(models.Model):
         employees = self.drivers_list
         total_income = 0
         for employee in employees:
-            total_income += Delivery.objects.filter(driver=employee.driver, is_edited=False, status="Zaakceptowana").aggregate(
+            employee_total_income = Delivery.objects.filter(driver=employee.driver, is_edited=False, status="Zaakceptowana").aggregate(
                 Sum('income')).get("income__sum")
+            if employee_total_income:
+                total_income += employee_total_income
         return total_income
 
     @property
@@ -459,6 +464,14 @@ class Delivery(models.Model):
                 return None
         except Delivery.DoesNotExist:
             return None
+
+    @staticmethod
+    def get_driver_distance(driver: Driver):
+        distance = Delivery.objects.filter(driver=driver, is_edited=False, status="Zaakceptowana").aggregate(
+                Sum('distance')).get("distance__sum")
+        if distance:
+            return distance
+        return 0
 
     @staticmethod
     def get_delivery_by_id(delivery_id: int):
