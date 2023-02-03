@@ -1,6 +1,6 @@
 asgiref==3.5.0
 Deprecated==1.2.13
-Django==4.0.7
+Django==4.0.9
 huey==2.4.3
 imageio==2.9.0
 networkx==2.6.3
