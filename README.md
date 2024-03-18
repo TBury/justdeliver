@@ -2,8 +2,6 @@
 
 **JustDeliver** to starszy brat projektu Hercules [https://github.com/TBury/hercules](https://github.com/TBury/hercules) mający dokładnie te same założenia: jest to system rozliczeń dla wirtualnych firm (grup graczy), którzy grają w grę Euro Truck Simulator 2. Służy on do zliczania ilości przejechanych kilometrów, dodawania nowych tras, sprawdzania aktywności *kierowców* i wiele innych rzeczy mających urealnić rozgrywkę.
 
-**Link do projektu**: [https://justdeliver.pl](https://justdeliver.pl)
-
 ![https://i.imgur.com/NohinPF.png](https://i.imgur.com/NohinPF.png)
 
 ### Założenia projektu
@@ -18,9 +16,3 @@ Brakuje w nim również dostępnej w projekcie Hercules integracji z Tesseractem
 
 ### Funkcje projektu
 Funkcje projektu są identyczne jak w przypadku projektu Hercules: **dodawanie i rozliczanie tras** oraz **generowanie dyspozycji**. *Szef* firmy sprawdzał poprawność zrzutu ekranu z treścią wpisaną do systemu i zatwierdzał bądź odrzucał trasy, które zostały nadesłane przez *kierowców*. Prócz tego system posiada automatyczną *Giełdę zleceń*, której zlecenia generowane są cyklicznie co 24 godziny.
-
-W systemie jest założone konto demonstracyjne, z którego można skorzystać do przetestowania działania systemu: 
-
-**Login**: demo_driver
-
-**Hasło:** Wnei9riDnbpMVYH
